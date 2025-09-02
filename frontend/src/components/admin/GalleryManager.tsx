@@ -109,6 +109,7 @@ export default function GalleryManager() {
         category: item.category,
         featured: item.featured,
         uploadDate: item.uploadDate,
+        imageFile: null,
       });
       setImagePreview(item.imageUrl);
     } else {
@@ -120,6 +121,7 @@ export default function GalleryManager() {
         category: 'Services',
         featured: false,
         uploadDate: new Date().toISOString().split('T')[0],
+        imageFile: null,
       });
       setImagePreview('');
     }

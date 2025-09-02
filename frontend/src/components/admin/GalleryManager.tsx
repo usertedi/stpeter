@@ -68,6 +68,8 @@ export default function GalleryManager() {
     category: string;
     featured: boolean;
     imageFile: File | null;
+    imageUrl: string;
+    uploadDate: string;
   }>({
     title: '',
     description: '',

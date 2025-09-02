@@ -77,6 +77,7 @@ export default function GalleryManager() {
     category: 'Services',
     featured: false,
     uploadDate: '',
+    imageFile: null,
   });
   const [imagePreview, setImagePreview] = useState('');
 

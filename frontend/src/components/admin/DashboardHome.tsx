@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FC } from 'react';
 import { 
   UserGroupIcon, 
   CalendarIcon, 
@@ -45,6 +45,27 @@ const recentActivity: ActivityItem[] = [
   { id: 4, action: 'Division "Youth Ministry" updated', time: '2 days ago' },
 ];
 
+type StatCardProps = {
+  icon: FC<any>;
+  count: number;
+  label: string;
+  bgColor: string;
+};
+
+const StatCard: FC<StatCardProps> = ({ icon: Icon, count, label, bgColor }) => (
+  <div className={`${bgColor} rounded-lg shadow-md p-6`}>
+    <div className="flex items-center">
+      <div className="flex-shrink-0 bg-white p-3 rounded-md">
+        <Icon className="h-6 w-6 text-gray-700" />
+      </div>
+      <div className="ml-4">
+        <div className="text-2xl font-bold">{count}</div>
+        <div className="text-gray-700">{label}</div>
+      </div>
+    </div>
+  </div>
+);
+
 export default function DashboardHome() {
   const [stats, setStats] = useState<Stats>(initialStats);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -71,20 +92,6 @@ export default function DashboardHome() {
 
     fetchStats();
   }, []);
-
-  const StatCard = ({ icon: Icon, count, label, bgColor }) => (
-    <div className={`${bgColor} rounded-lg shadow-md p-6`}>
-      <div className="flex items-center">
-        <div className="flex-shrink-0 bg-white p-3 rounded-md">
-          <Icon className="h-6 w-6 text-gray-500" />
-        </div>
-        <div className="ml-5">
-          <p className="text-2xl font-semibold text-white">{count}</p>
-          <p className="text-white text-opacity-80">{label}</p>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="space-y-6">

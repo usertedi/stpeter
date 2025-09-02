@@ -197,7 +197,7 @@ export default function GalleryManager() {
 
   // Format date for display
   const formatDate = (dateString: string) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 

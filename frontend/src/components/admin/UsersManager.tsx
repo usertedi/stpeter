@@ -181,7 +181,7 @@ export default function UsersManager() {
     }
     
     // In a real app, this would be an API call to update password
-    console.log(`Password updated for user ${currentUser.email}`);
+    console.log(`Password updated for user ${currentUser?.email}`);
     
     // Show success message (in a real app)
     alert('Password updated successfully!');

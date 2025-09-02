@@ -118,20 +118,23 @@ export default function ContactManager() {
 		setReplyText('');
 	};
 
-	const handleReplySubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
+ const handleReplySubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-		// In a real app, this would send an email via API
-		console.log('Sending reply to:', selectedMessage.email);
-		console.log('Reply content:', replyText);
+    // In a real app, this would send an email via API
+    if (selectedMessage) {
+        console.log('Sending reply to:', selectedMessage.email);
+    } else {
+        console.log('No selected message to reply to.');
+    }
+    console.log('Reply content:', replyText);
 
-		// Close the modal
-		handleCloseReplyModal();
+    // Close the modal
+    handleCloseReplyModal();
 
-		// Show success message (in a real app)
-		alert('Reply sent successfully!');
-	};
-
+    // Show success message (in a real app)
+    alert('Reply sent successfully!');
+  };
 	const filteredMessages = messages.filter((msg) => {
 		if (filter === 'all') return true;
 		if (filter === 'read') return msg.read;

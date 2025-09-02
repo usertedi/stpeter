@@ -154,11 +154,14 @@ export default function GalleryManager() {
       // For now, we'll just create a local URL for preview
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
-        setFormData({
-          ...formData,
-          imageUrl: reader.result,
-        });
+        // Type guard to ensure we only use string results
+        if (typeof reader.result === 'string') {
+          setImagePreview(reader.result);
+          setFormData({
+            ...formData,
+            imageUrl: reader.result,
+          });
+        }
       };
       reader.readAsDataURL(file);
     }

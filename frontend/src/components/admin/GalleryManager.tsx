@@ -145,7 +145,10 @@ export default function GalleryManager() {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files[0];
+    const files = e.target.files;
+    if (!files) return;
+    
+    const file = files[0];
     if (file) {
       // In a real app, this would upload to Cloudinary or similar service
       // For now, we'll just create a local URL for preview

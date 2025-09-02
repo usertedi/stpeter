@@ -155,7 +155,7 @@ export default function EventsManager() {
   };
 
   // Format date for display
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };

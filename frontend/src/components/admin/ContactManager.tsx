@@ -104,9 +104,13 @@ export default function ContactManager() {
 
 	const handleOpenReplyModal = () => {
 		setIsReplyModalOpen(true);
-		setReplyText(
-			`Dear ${selectedMessage ? selectedMessage.name : ''},\n\nThank you for your message. \n\nBest regards,\nSt. Peter Orthodox Church`
-		);
+		if (selectedMessage) {
+			setReplyText(
+				`Dear ${selectedMessage.name},\n\nThank you for your message. \n\nBest regards,\nSt. Peter Orthodox Church`
+			);
+		} else {
+			setReplyText('');
+		}
 	};
 
 	const handleCloseReplyModal = () => {

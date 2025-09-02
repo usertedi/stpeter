@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "create-admin": "node scripts/createAdmin.js",
+    "create-admin-interactive": "node scripts/createAdminInteractive.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

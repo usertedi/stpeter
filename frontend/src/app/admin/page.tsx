@@ -3,11 +3,6 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 
-export const metadata = {
-  title: 'Admin Dashboard | St. Peter Orthodox Church',
-  description: 'Admin dashboard for managing church content.',
-};
-
 export default function AdminPage() {
   const router = useRouter();
 

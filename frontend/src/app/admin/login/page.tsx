@@ -18,22 +18,29 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
+      console.log('Attempting login with URL:', `${process.env.NEXT_PUBLIC_API_URL}/auth/login`);
+      
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
+      
+      console.log('Response status:', res.status);
+      console.log('Response headers:', res.headers);
+      
       const data = await res.json();
+      console.log('Response data:', data);
 
-      if (res.ok && data.token) {
+      if (res.ok && data.success && data.token) {
         localStorage.setItem('token', data.token);
         router.push('/admin');
       } else {
         setError(data.error || 'Invalid email or password');
       }
     } catch (err) {
-      setError('An error occurred during login');
-      console.error(err);
+      console.error('Login error:', err);
+      setError('An error occurred during login. Please check the console for details.');
     } finally {
       setLoading(false);
     }

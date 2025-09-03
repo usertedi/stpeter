@@ -17,7 +17,11 @@ const app = express();
 // Middleware
 app.use(express.json());
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:3000',
+    'https://stpeter.vercel.app', // Your Vercel frontend URL
+    /\.vercel\.app$/, // Allow all Vercel preview deployments
+  ],
   credentials: true,
 };
 app.use(cors(corsOptions));

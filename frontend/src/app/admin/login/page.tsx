@@ -36,8 +36,9 @@ export default function AdminLogin() {
         console.log('Login successful, storing token:', data.token);
         // Store token in both localStorage and cookies for compatibility
         localStorage.setItem('token', data.token);
-        // Set cookie with proper options
-        document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
+        // Set cookie with proper options (remove secure flag for development)
+        const isProduction = window.location.protocol === 'https:';
+        document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}${isProduction ? '; secure' : ''}; samesite=strict`;
         console.log('Token stored, redirecting to admin dashboard');
         router.push('/admin');
         router.refresh(); // Force refresh to ensure the page updates

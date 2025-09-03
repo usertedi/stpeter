@@ -40,7 +40,7 @@ type User = {
   name: string;
   email: string;
   role: string;
-  lastLogin: string | null;
+  lastLogin: string;
   createdAt: string;
 };
 
@@ -157,7 +157,7 @@ export default function UsersManager() {
       setUsers(updatedUsers);
     } else {
       // Add new user
-      const newUser: User = {
+      const newUser = {
         id: Date.now().toString(),
         name: formData.name,
         email: formData.email,
@@ -181,7 +181,7 @@ export default function UsersManager() {
     }
     
     // In a real app, this would be an API call to update password
-    console.log(`Password updated for user ${currentUser?.email}`);
+    console.log(`Password updated for user ${currentUser.email}`);
     
     // Show success message (in a real app)
     alert('Password updated successfully!');
@@ -189,14 +189,14 @@ export default function UsersManager() {
     handleClosePasswordModal();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id) => {
     // In a real app, this would be an API call
     const updatedUsers = users.filter((usr) => usr.id !== id);
     setUsers(updatedUsers);
   };
 
   // Format date for display
-  const formatDate = (dateString: string | null) => {
+  const formatDate = (dateString) => {
     if (!dateString) return 'Never';
     
     const date = new Date(dateString);

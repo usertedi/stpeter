@@ -10,7 +10,14 @@ export default function AdminPage() {
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      // Check for token in both localStorage and cookies
+      const localToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const cookieToken = typeof window !== 'undefined' ? document.cookie
+        .split('; ')
+        .find(row => row.startsWith('token='))
+        ?.split('=')[1] : null;
+      
+      const token = localToken || cookieToken;
       console.log('Admin page - checking token:', token);
       
       if (!token) {

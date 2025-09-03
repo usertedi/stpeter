@@ -33,8 +33,11 @@ export default function AdminLogin() {
       console.log('Response data:', data);
 
       if (res.ok && data.success && data.token) {
+        console.log('Login successful, storing token:', data.token);
         localStorage.setItem('token', data.token);
+        console.log('Token stored, redirecting to admin dashboard');
         router.push('/admin');
+        router.refresh(); // Force refresh to ensure the page updates
       } else {
         setError(data.error || 'Invalid email or password');
       }

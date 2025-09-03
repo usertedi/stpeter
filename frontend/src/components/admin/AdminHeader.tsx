@@ -1,10 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { BellIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 
 export default function AdminHeader() {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState<boolean>(false);
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    router.push('/admin/login');
+    router.refresh();
+  };
 
   return (
     <header className="bg-white shadow-sm z-10">
@@ -45,12 +53,12 @@ export default function AdminHeader() {
                     >
                       Settings
                     </a>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       Sign out
-                    </a>
+                    </button>
                   </div>
                 )}
               </div>

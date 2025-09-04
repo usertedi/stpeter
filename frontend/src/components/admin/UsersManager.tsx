@@ -40,7 +40,7 @@ type User = {
   name: string;
   email: string;
   role: string;
-  lastLogin: string;
+  lastLogin: string | null;
   createdAt: string;
 };
 

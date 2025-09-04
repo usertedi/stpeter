@@ -1,35 +1,66 @@
 "use client";
 import { motion } from 'framer-motion'
+import { useEvents } from '@/hooks/useEvents'
 
-// Mock data - in a real app, this would come from the API
-const specialEvents = [
+// Fallback data in case API fails
+const fallbackSpecialEvents = [
   {
-    id: 1,
+    _id: '1',
     title: 'Parish Feast Day Celebration',
     date: 'June 29, 2023',
     time: '10:00 AM - 2:00 PM',
     location: 'Church Grounds',
     description: 'Join us as we celebrate the Feast of Saints Peter and Paul with Divine Liturgy followed by a festive meal and activities for all ages.',
+    category: 'special',
   },
   {
-    id: 2,
+    _id: '2',
     title: 'Annual Greek Festival',
     date: 'August 12-14, 2023',
     time: 'Various Times',
     location: 'Church Grounds',
     description: 'Our annual Greek Festival featuring authentic food, music, dancing, and cultural exhibits. This is our biggest community event of the year!',
+    category: 'special',
   },
   {
-    id: 3,
+    _id: '3',
     title: 'Orthodox Christian Education Series',
     date: 'September 5 - October 24, 2023',
     time: 'Tuesdays, 7:00 PM - 8:30 PM',
     location: 'Church Hall',
     description: 'An 8-week series exploring the fundamentals of Orthodox Christianity. Perfect for inquirers, catechumens, and anyone wanting to deepen their understanding of the faith.',
+    category: 'education',
   },
 ]
 
 export default function SpecialEvents() {
+  const { events, loading, error } = useEvents();
+  
+  // Filter for special events or use fallback data
+  const specialEvents = events.length > 0 
+    ? events.filter(event => event.category === 'special' || event.category === 'education')
+    : fallbackSpecialEvents;
+
+  if (loading) {
+    return (
+      <section className="section bg-gray-50">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="heading-2 mb-4">Special Events</h2>
+            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
+              Upcoming special events and celebrations
+            </p>
+          </div>
+          <div className="space-y-8 max-w-4xl mx-auto">
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="bg-gray-200 animate-pulse h-32 rounded-lg"></div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="section bg-gray-50">
       <div className="container-custom">
@@ -43,7 +74,7 @@ export default function SpecialEvents() {
         <div className="space-y-8 max-w-4xl mx-auto">
           {specialEvents.map((event, index) => (
             <motion.div
-              key={event.id}
+              key={event._id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}

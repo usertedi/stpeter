@@ -28,6 +28,7 @@ export default function AdminPage() {
       }
 
       try {
+        console.log('Validating token with API:', `${process.env.NEXT_PUBLIC_API_URL}/auth/me`);
         // Validate token with backend using the /auth/me endpoint
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
           method: 'GET',
@@ -37,14 +38,19 @@ export default function AdminPage() {
           },
         });
 
+        console.log('API response status:', response.status);
         const data = await response.json();
         console.log('Token validation response:', data);
+        console.log('Response data structure:', JSON.stringify(data, null, 2));
+        console.log('Checking data.data:', data.data);
+        console.log('Checking data.data.role:', data.data?.role);
 
-        if (response.ok && data.success && data.data && data.data.role === 'admin') {
+        if (response.ok && data.success && data.data && data.data.isAdmin === true) {
           console.log('Token valid and user is admin, setting authenticated');
           setIsAuthenticated(true);
         } else {
           console.log('Token invalid or user not admin, redirecting to login');
+          console.log('Response data:', data);
           // Clear invalid token
           localStorage.removeItem('token');
           document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
@@ -52,10 +58,37 @@ export default function AdminPage() {
         }
       } catch (error) {
         console.error('Error validating token:', error);
-        // Clear token on error
-        localStorage.removeItem('token');
-        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        router.replace('/admin/login');
+        console.log('API validation failed, but token exists. Checking if we can proceed...');
+        
+        // If API call fails but we have a token, try to decode it locally as fallback
+        try {
+          const tokenParts = token.split('.');
+          if (tokenParts.length === 3) {
+            const payload = JSON.parse(atob(tokenParts[1]));
+            console.log('Decoded token payload:', payload);
+            
+            // Check if token is not expired and has admin role
+            if (payload.exp && payload.exp > Date.now() / 1000 && payload.isAdmin === true) {
+              console.log('Token is valid locally, proceeding with authentication');
+              setIsAuthenticated(true);
+            } else {
+              console.log('Token is expired or not admin, redirecting to login');
+              localStorage.removeItem('token');
+              document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+              router.replace('/admin/login');
+            }
+          } else {
+            console.log('Invalid token format, redirecting to login');
+            localStorage.removeItem('token');
+            document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            router.replace('/admin/login');
+          }
+        } catch (decodeError) {
+          console.error('Error decoding token:', decodeError);
+          localStorage.removeItem('token');
+          document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          router.replace('/admin/login');
+        }
       }
       
       setIsLoading(false);

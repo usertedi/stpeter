@@ -19,31 +19,31 @@ export const useEvents = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch events');
-        }
-        
-        const data = await response.json();
-        setEvents(data.data || []);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching events:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch events');
-        // Fallback to empty array on error
-        setEvents([]);
-      } finally {
-        setLoading(false);
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
       }
-    };
+      
+      const data = await response.json();
+      setEvents(data.data || []);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching events:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch events');
+      // Fallback to empty array on error
+      setEvents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchEvents();
   }, []);
 
-  return { events, loading, error };
+  return { events, loading, error, refresh: fetchEvents };
 };

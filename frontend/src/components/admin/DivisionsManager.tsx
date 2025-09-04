@@ -64,16 +64,33 @@ export default function DivisionsManager() {
   });
 
   useEffect(() => {
-    // Simulate API call to get divisions
     const fetchDivisions = async () => {
       try {
-        // In a real app, this would be an API call
-        setTimeout(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
           setDivisions(initialDivisions);
           setIsLoading(false);
-        }, 1000);
+          return;
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/divisions`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setDivisions(data.data || []);
+        } else {
+          // Fallback to static data if API fails
+          setDivisions(initialDivisions);
+        }
       } catch (error) {
         console.error('Error fetching divisions:', error);
+        // Fallback to static data on error
+        setDivisions(initialDivisions);
+      } finally {
         setIsLoading(false);
       }
     };
@@ -115,32 +132,91 @@ export default function DivisionsManager() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // In a real app, this would be an API call
-    if (currentDivision) {
-      // Update existing division
-      const updatedDivisions = divisions.map((div) =>
-        div.id === currentDivision.id ? { ...div, ...formData } : div
-      );
-      setDivisions(updatedDivisions);
-    } else {
-      // Add new division
-      const newDivision = {
-        id: Date.now().toString(),
-        ...formData,
-      };
-      setDivisions([...divisions, newDivision]);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('You must be logged in to make changes');
+        return;
+      }
+
+      if (currentDivision) {
+        // Update existing division
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/divisions/${currentDivision.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update division');
+        }
+
+        const updatedDivision = await response.json();
+        const updatedDivisions = divisions.map((div) =>
+          div.id === currentDivision.id ? { ...div, ...updatedDivision.data } : div
+        );
+        setDivisions(updatedDivisions);
+      } else {
+        // Add new division
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/divisions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create division');
+        }
+
+        const newDivision = await response.json();
+        setDivisions([...divisions, newDivision.data]);
+      }
+      
+      handleCloseModal();
+    } catch (error) {
+      console.error('Error saving division:', error);
+      alert('Failed to save division. Please try again.');
     }
-    
-    handleCloseModal();
   };
 
-  const handleDelete = (id: string) => {
-    // In a real app, this would be an API call
-    const updatedDivisions = divisions.filter((div) => div.id !== id);
-    setDivisions(updatedDivisions);
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this division?')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('You must be logged in to make changes');
+        return;
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/divisions/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete division');
+      }
+
+      const updatedDivisions = divisions.filter((div) => div.id !== id);
+      setDivisions(updatedDivisions);
+    } catch (error) {
+      console.error('Error deleting division:', error);
+      alert('Failed to delete division. Please try again.');
+    }
   };
 
   return (

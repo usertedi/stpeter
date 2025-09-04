@@ -69,16 +69,33 @@ export default function EventsManager() {
   });
 
   useEffect(() => {
-    // Simulate API call to get events
     const fetchEvents = async () => {
       try {
-        // In a real app, this would be an API call
-        setTimeout(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
           setEvents(initialEvents);
           setIsLoading(false);
-        }, 1000);
+          return;
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setEvents(data.data || []);
+        } else {
+          // Fallback to static data if API fails
+          setEvents(initialEvents);
+        }
       } catch (error) {
         console.error('Error fetching events:', error);
+        // Fallback to static data on error
+        setEvents(initialEvents);
+      } finally {
         setIsLoading(false);
       }
     };
@@ -126,32 +143,91 @@ export default function EventsManager() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // In a real app, this would be an API call
-    if (currentEvent) {
-      // Update existing event
-      const updatedEvents = events.map((evt) =>
-        evt.id === currentEvent.id ? { ...evt, ...formData } : evt
-      );
-      setEvents(updatedEvents);
-    } else {
-      // Add new event
-      const newEvent = {
-        id: Date.now().toString(),
-        ...formData,
-      };
-      setEvents([...events, newEvent]);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('You must be logged in to make changes');
+        return;
+      }
+
+      if (currentEvent) {
+        // Update existing event
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${currentEvent.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update event');
+        }
+
+        const updatedEvent = await response.json();
+        const updatedEvents = events.map((evt) =>
+          evt.id === currentEvent.id ? { ...evt, ...updatedEvent.data } : evt
+        );
+        setEvents(updatedEvents);
+      } else {
+        // Add new event
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create event');
+        }
+
+        const newEvent = await response.json();
+        setEvents([...events, newEvent.data]);
+      }
+      
+      handleCloseModal();
+    } catch (error) {
+      console.error('Error saving event:', error);
+      alert('Failed to save event. Please try again.');
     }
-    
-    handleCloseModal();
   };
 
-  const handleDelete = (id: string) => {
-    // In a real app, this would be an API call
-    const updatedEvents = events.filter((evt) => evt.id !== id);
-    setEvents(updatedEvents);
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this event?')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('You must be logged in to make changes');
+        return;
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete event');
+      }
+
+      const updatedEvents = events.filter((evt) => evt.id !== id);
+      setEvents(updatedEvents);
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      alert('Failed to delete event. Please try again.');
+    }
   };
 
   // Format date for display

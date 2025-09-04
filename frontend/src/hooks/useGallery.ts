@@ -17,31 +17,31 @@ export const useGallery = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/gallery`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch gallery images');
-        }
-        
-        const data = await response.json();
-        setImages(data.data || []);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching gallery images:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch gallery images');
-        // Fallback to empty array on error
-        setImages([]);
-      } finally {
-        setLoading(false);
+  const fetchImages = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/gallery`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch gallery images');
       }
-    };
+      
+      const data = await response.json();
+      setImages(data.data || []);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching gallery images:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch gallery images');
+      // Fallback to empty array on error
+      setImages([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchImages();
   }, []);
 
-  return { images, loading, error };
+  return { images, loading, error, refresh: fetchImages };
 };

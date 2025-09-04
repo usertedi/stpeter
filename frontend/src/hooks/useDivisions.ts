@@ -16,31 +16,31 @@ export const useDivisions = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchDivisions = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/divisions`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch divisions');
-        }
-        
-        const data = await response.json();
-        setDivisions(data.data || []);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching divisions:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch divisions');
-        // Fallback to empty array on error
-        setDivisions([]);
-      } finally {
-        setLoading(false);
+  const fetchDivisions = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/divisions`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch divisions');
       }
-    };
+      
+      const data = await response.json();
+      setDivisions(data.data || []);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching divisions:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch divisions');
+      // Fallback to empty array on error
+      setDivisions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchDivisions();
   }, []);
 
-  return { divisions, loading, error };
+  return { divisions, loading, error, refresh: fetchDivisions };
 };

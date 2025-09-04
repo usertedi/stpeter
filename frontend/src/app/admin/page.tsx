@@ -28,8 +28,8 @@ export default function AdminPage() {
       }
 
       try {
-        // Validate token with backend
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify`, {
+        // Validate token with backend using the /auth/me endpoint
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -40,7 +40,7 @@ export default function AdminPage() {
         const data = await response.json();
         console.log('Token validation response:', data);
 
-        if (response.ok && data.success && data.user && data.user.role === 'admin') {
+        if (response.ok && data.success && data.data && data.data.role === 'admin') {
           console.log('Token valid and user is admin, setting authenticated');
           setIsAuthenticated(true);
         } else {

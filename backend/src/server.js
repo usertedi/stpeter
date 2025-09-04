@@ -40,15 +40,15 @@ app.get('/api', (req, res) => {
   res.json({ message: 'API is working!' });
 });
 
-// Serve static frontend build
-const frontendBuildPath = path.join(__dirname, 'frontend', 'build');
-app.use(express.static(frontendBuildPath));
+// Only serve API routes - frontend is handled by Vercel
+// Remove static file serving since frontend is deployed separately
 
-// For any other route not starting with /api, serve index.html (React handles routing)
+// Catch-all route for undefined API endpoints
 app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api')) {
-    res.sendFile(path.join(frontendBuildPath, 'index.html'));
-  }
+  res.status(404).json({
+    success: false,
+    error: 'API endpoint not found'
+  });
 });
 
 // Error handling middleware

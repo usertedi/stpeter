@@ -12,7 +12,7 @@ export default function GalleryPage() {
 
   // Get unique albums from the images
   const availableAlbums = images.length > 0 
-    ? [...new Set(images.map(img => img.album))]
+    ? Array.from(new Set(images.map(img => img.album)))
     : [];
 
   return (

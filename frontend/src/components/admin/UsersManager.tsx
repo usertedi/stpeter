@@ -189,14 +189,14 @@ export default function UsersManager() {
     handleClosePasswordModal();
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: string) => {
     // In a real app, this would be an API call
     const updatedUsers = users.filter((usr) => usr.id !== id);
     setUsers(updatedUsers);
   };
 
   // Format date for display
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | null) => {
     if (!dateString) return 'Never';
     
     const date = new Date(dateString);

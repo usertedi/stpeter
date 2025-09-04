@@ -40,8 +40,13 @@ export default function AdminLogin() {
         const isProduction = window.location.protocol === 'https:';
         document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}${isProduction ? '; secure' : ''}; samesite=strict`;
         console.log('Token stored, redirecting to admin dashboard');
-        router.push('/admin');
-        router.refresh(); // Force refresh to ensure the page updates
+        
+        // Use replace instead of push to prevent back button issues
+        router.replace('/admin');
+        // Add a small delay to ensure the token is properly set
+        setTimeout(() => {
+          router.refresh();
+        }, 100);
       } else {
         setError(data.error || 'Invalid email or password');
       }

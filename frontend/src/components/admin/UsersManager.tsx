@@ -157,7 +157,7 @@ export default function UsersManager() {
       setUsers(updatedUsers);
     } else {
       // Add new user
-      const newUser = {
+      const newUser: User = {
         id: Date.now().toString(),
         name: formData.name,
         email: formData.email,

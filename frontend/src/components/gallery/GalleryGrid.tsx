@@ -3,99 +3,95 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useGallery } from '@/hooks/useGallery';
 
-// Mock data for gallery images
-const galleryImages = [
+// Fallback data in case API fails
+const fallbackImages = [
   {
-    id: 1,
+    _id: '1',
     title: 'Sunday Divine Liturgy',
     album: 'services',
     imageUrl: '/images/gallery/service-1.jpg',
-    description: 'Sunday Divine Liturgy celebration'
+    description: 'Sunday Divine Liturgy celebration',
+    cloudinaryPublicId: '',
+    uploadedBy: 'admin',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: 2,
+    _id: '2',
     title: 'Easter Celebration',
     album: 'holidays',
     imageUrl: '/images/gallery/holiday-1.jpg',
-    description: 'Easter celebration with the community'
+    description: 'Easter celebration with the community',
+    cloudinaryPublicId: '',
+    uploadedBy: 'admin',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: 3,
+    _id: '3',
     title: 'Youth Group Meeting',
     album: 'youth',
     imageUrl: '/images/gallery/youth-1.jpg',
-    description: 'Weekly youth group gathering'
+    description: 'Weekly youth group gathering',
+    cloudinaryPublicId: '',
+    uploadedBy: 'admin',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: 4,
+    _id: '4',
     title: 'Food Drive',
     album: 'community',
     imageUrl: '/images/gallery/community-1.jpg',
-    description: 'Annual food drive for the local community'
+    description: 'Annual food drive for the local community',
+    cloudinaryPublicId: '',
+    uploadedBy: 'admin',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: 5,
+    _id: '5',
     title: 'Christmas Service',
     album: 'holidays',
     imageUrl: '/images/gallery/holiday-2.jpg',
-    description: 'Christmas Eve service'
+    description: 'Christmas Eve service',
+    cloudinaryPublicId: '',
+    uploadedBy: 'admin',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
-    id: 6,
+    _id: '6',
     title: 'Bible Study',
     album: 'events',
     imageUrl: '/images/gallery/event-1.jpg',
-    description: 'Weekly Bible study session'
-  },
-  {
-    id: 7,
-    title: 'Church Choir',
-    album: 'services',
-    imageUrl: '/images/gallery/service-2.jpg',
-    description: 'Church choir performance'
-  },
-  {
-    id: 8,
-    title: 'Summer Camp',
-    album: 'youth',
-    imageUrl: '/images/gallery/youth-2.jpg',
-    description: 'Annual summer camp for youth'
-  },
-  {
-    id: 9,
-    title: 'Parish Picnic',
-    album: 'events',
-    imageUrl: '/images/gallery/event-2.jpg',
-    description: 'Annual parish picnic'
-  },
-  {
-    id: 10,
-    title: 'Homeless Outreach',
-    album: 'community',
-    imageUrl: '/images/gallery/community-2.jpg',
-    description: 'Homeless outreach program'
-  },
-  {
-    id: 11,
-    title: 'Palm Sunday',
-    album: 'holidays',
-    imageUrl: '/images/gallery/holiday-3.jpg',
-    description: 'Palm Sunday celebration'
-  },
-  {
-    id: 12,
-    title: 'Baptism Ceremony',
-    album: 'services',
-    imageUrl: '/images/gallery/service-3.jpg',
-    description: 'Baptism ceremony'
+    description: 'Weekly Bible study session',
+    cloudinaryPublicId: '',
+    uploadedBy: 'admin',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   }
 ];
 
-export default function GalleryGrid() {
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
+interface GalleryGridProps {
+  activeAlbum?: string;
+}
 
-  const openLightbox = (id: number) => {
+export default function GalleryGrid({ activeAlbum = 'all' }: GalleryGridProps) {
+  const { images, loading, error } = useGallery();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Use API data if available, otherwise fallback to static data
+  const allImages = images.length > 0 ? images : fallbackImages;
+  
+  // Filter images by album
+  const galleryImages = activeAlbum === 'all' 
+    ? allImages 
+    : allImages.filter(image => image.album === activeAlbum);
+
+  const openLightbox = (id: string) => {
     setSelectedImage(id);
     document.body.style.overflow = 'hidden';
   };
@@ -120,6 +116,25 @@ export default function GalleryGrid() {
     show: { opacity: 1, y: 0 }
   };
 
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, index) => (
+          <div key={index} className="bg-gray-200 animate-pulse h-64 rounded-lg"></div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-600 mb-4">Error loading gallery images: {error}</p>
+        <p className="text-gray-600">Using fallback images...</p>
+      </div>
+    );
+  }
+
   return (
     <>
       <motion.div 
@@ -130,10 +145,10 @@ export default function GalleryGrid() {
       >
         {galleryImages.map((image) => (
           <motion.div 
-            key={image.id} 
+            key={image._id} 
             className="overflow-hidden rounded-lg shadow-md cursor-pointer group"
             variants={item}
-            onClick={() => openLightbox(image.id)}
+            onClick={() => openLightbox(image._id)}
           >
             <div className="relative h-64 w-full">
               <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex items-center justify-center">
@@ -162,22 +177,22 @@ export default function GalleryGrid() {
             &times;
           </button>
           
-          {galleryImages.find(img => img.id === selectedImage) && (
+          {galleryImages.find(img => img._id === selectedImage) && (
             <div className="max-w-4xl w-full">
               <div className="relative h-[70vh] w-full">
                 <Image 
-                  src={galleryImages.find(img => img.id === selectedImage)?.imageUrl || ''} 
-                  alt={galleryImages.find(img => img.id === selectedImage)?.title || ''}
+                  src={galleryImages.find(img => img._id === selectedImage)?.imageUrl || ''} 
+                  alt={galleryImages.find(img => img._id === selectedImage)?.title || ''}
                   fill
                   className="object-contain"
                 />
               </div>
               <div className="text-white mt-4">
                 <h3 className="text-xl font-bold">
-                  {galleryImages.find(img => img.id === selectedImage)?.title}
+                  {galleryImages.find(img => img._id === selectedImage)?.title}
                 </h3>
                 <p className="text-gray-300">
-                  {galleryImages.find(img => img.id === selectedImage)?.description}
+                  {galleryImages.find(img => img._id === selectedImage)?.description}
                 </p>
               </div>
             </div>

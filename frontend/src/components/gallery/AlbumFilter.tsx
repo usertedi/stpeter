@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 
-// Mock data for albums
-const albums = [
+// Default albums - these will be dynamically generated from actual data
+const defaultAlbums = [
   { id: 'all', name: 'All Photos' },
   { id: 'services', name: 'Church Services' },
   { id: 'events', name: 'Special Events' },
@@ -13,8 +13,23 @@ const albums = [
   { id: 'youth', name: 'Youth Activities' }
 ];
 
-export default function AlbumFilter() {
-  const [activeAlbum, setActiveAlbum] = useState('all');
+interface AlbumFilterProps {
+  activeAlbum: string;
+  onAlbumChange: (album: string) => void;
+  availableAlbums?: string[];
+}
+
+export default function AlbumFilter({ activeAlbum, onAlbumChange, availableAlbums = [] }: AlbumFilterProps) {
+  // Generate albums from available data or use defaults
+  const albums = availableAlbums.length > 0 
+    ? [
+        { id: 'all', name: 'All Photos' },
+        ...availableAlbums.map(album => ({
+          id: album,
+          name: album.charAt(0).toUpperCase() + album.slice(1).replace(/([A-Z])/g, ' $1')
+        }))
+      ]
+    : defaultAlbums;
 
   return (
     <div className="mb-8">
@@ -29,7 +44,7 @@ export default function AlbumFilter() {
         {albums.map((album) => (
           <button
             key={album.id}
-            onClick={() => setActiveAlbum(album.id)}
+            onClick={() => onAlbumChange(album.id)}
             className={`px-4 py-2 rounded-full transition-all ${activeAlbum === album.id 
               ? 'bg-primary text-white' 
               : 'bg-gray-100 hover:bg-gray-200 text-gray-800'}`}

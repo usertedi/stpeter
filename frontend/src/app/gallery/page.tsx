@@ -1,20 +1,30 @@
-import { Metadata } from 'next';
+'use client';
+
+import { useState } from 'react';
 import GalleryHero from '@/components/gallery/GalleryHero';
 import GalleryGrid from '@/components/gallery/GalleryGrid';
 import AlbumFilter from '@/components/gallery/AlbumFilter';
-
-export const metadata: Metadata = {
-  title: 'Gallery | St. Peter Orthodox Church',
-  description: 'Browse photos from our church services, events, and community activities.'
-};
+import { useGallery } from '@/hooks/useGallery';
 
 export default function GalleryPage() {
+  const { images } = useGallery();
+  const [activeAlbum, setActiveAlbum] = useState('all');
+
+  // Get unique albums from the images
+  const availableAlbums = images.length > 0 
+    ? [...new Set(images.map(img => img.album))]
+    : [];
+
   return (
     <main className="min-h-screen">
       <GalleryHero />
       <div className="container-custom py-12">
-        <AlbumFilter />
-        <GalleryGrid />
+        <AlbumFilter 
+          activeAlbum={activeAlbum}
+          onAlbumChange={setActiveAlbum}
+          availableAlbums={availableAlbums}
+        />
+        <GalleryGrid activeAlbum={activeAlbum} />
       </div>
     </main>
   );

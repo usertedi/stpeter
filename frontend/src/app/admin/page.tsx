@@ -9,7 +9,7 @@ export default function AdminPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = () => {
+    const checkAuth = async () => {
       // Check for token in both localStorage and cookies
       const localToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       const cookieToken = typeof window !== 'undefined' ? document.cookie
@@ -23,10 +23,41 @@ export default function AdminPage() {
       if (!token) {
         console.log('No token found, redirecting to login');
         router.replace('/admin/login');
-      } else {
-        console.log('Token found, setting authenticated');
-        setIsAuthenticated(true);
+        setIsLoading(false);
+        return;
       }
+
+      try {
+        // Validate token with backend
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+        console.log('Token validation response:', data);
+
+        if (response.ok && data.success && data.user && data.user.role === 'admin') {
+          console.log('Token valid and user is admin, setting authenticated');
+          setIsAuthenticated(true);
+        } else {
+          console.log('Token invalid or user not admin, redirecting to login');
+          // Clear invalid token
+          localStorage.removeItem('token');
+          document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          router.replace('/admin/login');
+        }
+      } catch (error) {
+        console.error('Error validating token:', error);
+        // Clear token on error
+        localStorage.removeItem('token');
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        router.replace('/admin/login');
+      }
+      
       setIsLoading(false);
     };
 

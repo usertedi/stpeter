@@ -167,9 +167,9 @@ export default function ContactManager() {
                     className={`block w-full p-4 text-left hover:bg-gray-50 ${selectedMessage?._id === message._id ? 'bg-primary-50' : ''}`}
                   >
                     <div className="flex items-start justify-between gap-4">
-                      <div>
+                      <div className="min-w-0">
                         <p className="font-semibold text-gray-900">{message.subject}</p>
-                        <p className="text-sm text-gray-600">{message.name} • {message.email}</p>
+                        <p className="break-words text-sm text-gray-600">{message.name} • {message.email}</p>
                       </div>
                       <span className={`rounded-full px-2 py-1 text-xs font-medium ${message.status === 'new' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
                         {message.status}
@@ -187,7 +187,7 @@ export default function ContactManager() {
           {selectedMessage ? (
             <div>
               <div className="mb-4 flex items-start justify-between gap-4">
-                <div>
+                <div className="min-w-0">
                   <h2 className="text-xl font-bold text-gray-900">{selectedMessage.subject}</h2>
                   <p className="text-sm text-gray-500">
                     {new Date(selectedMessage.createdAt).toLocaleString()}
@@ -211,7 +211,7 @@ export default function ContactManager() {
                 <div>
                   <dt className="font-medium text-gray-700">Email</dt>
                   <dd>
-                    <a className="text-primary-600 hover:underline" href={`mailto:${selectedMessage.email}`}>
+                    <a className="break-all text-primary-600 hover:underline" href={`mailto:${selectedMessage.email}`}>
                       {selectedMessage.email}
                     </a>
                   </dd>

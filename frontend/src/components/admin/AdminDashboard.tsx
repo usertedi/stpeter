@@ -34,11 +34,11 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex min-h-dvh bg-gray-100">
       <AdminSidebar currentView={currentView} setCurrentView={setCurrentView} />
-      <div className="flex flex-col flex-1 overflow-hidden md:ml-64">
+      <div className="flex min-w-0 flex-1 flex-col md:ml-64">
         <AdminHeader />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
+        <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-6">
           {renderView()}
         </main>
       </div>

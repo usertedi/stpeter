@@ -211,11 +211,11 @@ export default function UsersManager() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-bold text-gray-800">Manage Users</h2>
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          className="flex w-full items-center justify-center rounded-md bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:w-auto"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
           Add User
@@ -229,8 +229,9 @@ export default function UsersManager() {
           ))}
         </div>
       ) : (
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
+        <div className="overflow-hidden rounded-lg bg-white shadow-md">
+          <div className="overflow-x-auto">
+          <table className="min-w-[980px] divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -300,6 +301,7 @@ export default function UsersManager() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

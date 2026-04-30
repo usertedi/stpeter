@@ -22,12 +22,14 @@ export default function Header() {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <nav className="container-custom flex items-center justify-between py-4" aria-label="Global">
-        <div className="flex lg:flex-1">
-          <Link href="/" className="-m-1.5 p-1.5">
+        <div className="flex min-w-0 lg:flex-1">
+          <Link href="/" className="-m-1.5 min-w-0 p-1.5">
             <span className="sr-only">ቅዱስ ጴጥሮስ ጊቢ ጉባኤ</span>
-            <div className="h-10 w-auto flex items-center">
+            <div className="flex h-10 min-w-0 items-center">
               {/* Replace with your actual logo */}
-              <span className="text-xl font-serif font-bold text-primary-700">ቅዱስ ጴጥሮስ ጊቢ ጉባኤ</span>
+              <span className="max-w-[calc(100vw-5rem)] truncate font-serif text-lg font-bold text-primary-700 sm:max-w-none sm:text-xl">
+                ቅዱስ ጴጥሮስ ጊቢ ጉባኤ
+              </span>
             </div>
           </Link>
         </div>
@@ -77,8 +79,10 @@ export default function Header() {
           <div className="flex items-center justify-between">
             <Link href="/" className="-m-1.5 p-1.5" onClick={() => setMobileMenuOpen(false)}>
               <span className="sr-only">ቅዱስ ጴጥሮስ ጊቢ ጉባኤ</span>
-              <div className="h-8 w-auto">
-                <span className="text-lg font-serif font-bold text-primary-700">St. Peter Orthodox Church</span>
+              <div className="flex h-8 min-w-0 items-center">
+                <span className="max-w-[calc(100vw-7rem)] truncate font-serif text-lg font-bold text-primary-700">
+                  ቅዱስ ጴጥሮስ ጊቢ ጉባኤ
+                </span>
               </div>
             </Link>
             <button

@@ -37,10 +37,13 @@ export default function AdminSidebar({ currentView, setCurrentView }: AdminSideb
   return (
     <>
       {/* Mobile menu button */}
-      <div className="fixed top-0 left-0 z-40 p-4 md:hidden">
+      <div className="fixed left-0 top-0 z-40 p-4 md:hidden">
         <button
+          type="button"
           onClick={toggleMobileMenu}
           className="p-2 text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          aria-expanded={isMobileMenuOpen}
+          aria-label="Toggle admin menu"
         >
           {isMobileMenuOpen ? (
             <XMarkIcon className="w-6 h-6" />
@@ -51,10 +54,12 @@ export default function AdminSidebar({ currentView, setCurrentView }: AdminSideb
       </div>
 
       {/* Sidebar for mobile */}
-      <div
-        className={`fixed inset-0 z-30 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:hidden transition-transform duration-300 ease-in-out`}
-      >
-        <div className="relative flex flex-col w-64 h-full bg-primary-800 text-white">
+      <div className={`fixed inset-0 z-30 md:hidden ${isMobileMenuOpen ? '' : 'pointer-events-none'}`}>
+        <div
+          className={`absolute inset-0 bg-gray-600 bg-opacity-75 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0'}`}
+          onClick={() => setIsMobileMenuOpen(false)}
+        ></div>
+        <div className={`relative flex h-full w-64 max-w-[85vw] flex-col bg-primary-800 text-white transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           <div className="flex items-center justify-center h-16 bg-primary-900">
             <h2 className="text-xl font-bold">Admin Portal</h2>
           </div>
@@ -83,10 +88,6 @@ export default function AdminSidebar({ currentView, setCurrentView }: AdminSideb
             </Link>
           </div>
         </div>
-        <div 
-          className="absolute inset-0 bg-gray-600 bg-opacity-75" 
-          onClick={() => setIsMobileMenuOpen(false)}
-        ></div>
       </div>
 
       {/* Sidebar for desktop */}

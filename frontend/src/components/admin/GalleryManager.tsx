@@ -279,11 +279,11 @@ export default function GalleryManager() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-bold text-gray-800">Manage Gallery</h2>
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          className="flex w-full items-center justify-center rounded-md bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:w-auto"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
           Add Image
@@ -297,7 +297,7 @@ export default function GalleryManager() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {galleryItems.map((item) => (
             <div key={item._id} className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="relative h-48 bg-gray-200">

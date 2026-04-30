@@ -17,15 +17,15 @@ export default function AdminHeader() {
   };
 
   return (
-    <header className="bg-white shadow-sm z-10">
-      <div className="px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-20 bg-white shadow-sm">
+      <div className="px-4 pl-20 sm:px-6 md:pl-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex-1 flex justify-end md:justify-between">
-            <div className="hidden md:flex md:items-center">
-              <h1 className="text-2xl font-semibold text-gray-800">Admin Dashboard</h1>
+          <div className="flex min-w-0 flex-1 items-center justify-between">
+            <div className="flex min-w-0 items-center">
+              <h1 className="truncate text-lg font-semibold text-gray-800 sm:text-xl md:text-2xl">Admin Dashboard</h1>
             </div>
-            <div className="flex items-center space-x-4">
-              <button className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            <div className="ml-4 flex flex-shrink-0 items-center space-x-3 sm:space-x-4">
+              <button type="button" className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                 <span className="sr-only">View notifications</span>
                 <BellIcon className="h-6 w-6" />
               </button>

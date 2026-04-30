@@ -19,6 +19,15 @@ body {
   background: rgb(var(--background-rgb));
 }
 
+@layer base {
+  input:not([type='checkbox']):not([type='radio']),
+  textarea,
+  select {
+    @apply bg-white text-gray-900 placeholder-gray-500;
+    color-scheme: light;
+  }
+}
+
 @layer components {
   .container-custom {
     @apply container mx-auto px-4 sm:px-6 lg:px-8;

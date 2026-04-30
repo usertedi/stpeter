@@ -7,7 +7,7 @@ import AlbumFilter from '@/components/gallery/AlbumFilter';
 import { useGallery } from '@/hooks/useGallery';
 
 export default function GalleryPage() {
-  const { images } = useGallery();
+  const { images, loading } = useGallery();
   const [activeAlbum, setActiveAlbum] = useState('all');
 
   // Get unique albums from the images
@@ -24,7 +24,7 @@ export default function GalleryPage() {
           onAlbumChange={setActiveAlbum}
           availableAlbums={availableAlbums}
         />
-        <GalleryGrid activeAlbum={activeAlbum} />
+        <GalleryGrid activeAlbum={activeAlbum} images={images} loading={loading} />
       </div>
     </main>
   );

@@ -1,4 +1,5 @@
 "use client";
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useDivisions } from '@/hooks/useDivisions'
 import { FaPrayingHands, FaHandsHelping, FaMusic, FaBook, FaUsers, FaCoffee, FaMoneyBillWave, FaBullhorn, FaTools } from 'react-icons/fa'
@@ -121,7 +122,7 @@ const itemVariants = {
 }
 
 export default function DivisionsList() {
-  const { divisions, loading, error } = useDivisions();
+  const { divisions, loading } = useDivisions();
 
   if (loading) {
     return (
@@ -143,8 +144,7 @@ export default function DivisionsList() {
     );
   }
 
-  // Prefer API divisions if available; otherwise use 9-item fallback
-  const cards = divisions && divisions.length >= 9 ? divisions.slice(0, 9) : fallbackDivisions;
+  const cards = divisions.length > 0 ? divisions.slice(0, 9) : fallbackDivisions;
 
   return (
     <section className="section bg-white">
@@ -190,9 +190,9 @@ export default function DivisionsList() {
           <p className="text-lg text-secondary-600 max-w-2xl mx-auto mb-8">
            በተለያዩ የስራ ዘርፎች ላይ ማገልገል ፈቃደኛ ከሆናቹ, please contact us.
           </p>
-          <button className="btn-primary">
+          <Link href="/contact" className="btn-primary">
             Contact Us to Volunteer
-          </button>
+          </Link>
         </div>
       </div>
     </section>

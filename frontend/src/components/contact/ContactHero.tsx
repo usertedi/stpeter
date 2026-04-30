@@ -24,7 +24,7 @@ export default function ContactHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          We'd love to hear from you. Reach out with any questions about our services, 
+          We&apos;d love to hear from you. Reach out with any questions about our services, 
           events, or how to become part of our community.
         </motion.p>
       </div>

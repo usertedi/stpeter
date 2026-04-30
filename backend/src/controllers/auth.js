@@ -1,6 +1,10 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { getPagination, getPaginationMeta } = require('../utils/pagination');
+const sendEmail = require('../utils/email');
+
+const userListFields = 'name email isAdmin createdAt';
 
 /**
  * @desc    Register user
@@ -90,11 +94,9 @@ exports.login = async (req, res) => {
  */
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
-
     res.status(200).json({
       success: true,
-      data: user
+      data: req.user
     });
   } catch (error) {
     res.status(500).json({
@@ -172,9 +174,9 @@ exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'There is no user with that email'
+      return res.status(200).json({
+        success: true,
+        data: 'If that email exists, password reset instructions have been sent'
       });
     }
 
@@ -192,14 +194,33 @@ exports.forgotPassword = async (req, res) => {
 
     await user.save({ validateBeforeSave: false });
 
-    // TODO: Send email with reset token
+    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/admin/reset-password/${resetToken}`;
+
+    await sendEmail({
+      to: user.email,
+      subject: 'Password reset instructions',
+      text: `You requested a password reset. Visit this link within 10 minutes: ${resetUrl}`,
+      html: `
+        <p>You requested a password reset.</p>
+        <p>This link expires in 10 minutes:</p>
+        <p><a href="${resetUrl}">${resetUrl}</a></p>
+      `
+    });
 
     res.status(200).json({
       success: true,
-      data: 'Email sent'
+      data: 'If that email exists, password reset instructions have been sent'
     });
   } catch (error) {
     console.log(error);
+    if (req.body.email) {
+      await User.findOneAndUpdate(
+        { email: req.body.email },
+        { resetPasswordToken: undefined, resetPasswordExpire: undefined },
+        { runValidators: false }
+      );
+    }
+
     res.status(500).json({
       success: false,
       error: 'Email could not be sent'
@@ -213,11 +234,43 @@ exports.forgotPassword = async (req, res) => {
  * @access  Public
  */
 exports.resetPassword = async (req, res) => {
-  // TODO: Implement reset password functionality
-  res.status(200).json({
-    success: true,
-    data: 'Password reset'
-  });
+  try {
+    const resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(req.params.resettoken)
+      .digest('hex');
+
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid or expired reset token'
+      });
+    }
+
+    if (!req.body.password || req.body.password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        error: 'Password must be at least 6 characters'
+      });
+    }
+
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    sendTokenResponse(user, 200, res);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 };
 
 /**
@@ -227,11 +280,21 @@ exports.resetPassword = async (req, res) => {
  */
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const pagination = getPagination(req.query, { defaultLimit: 25, maxLimit: 100 });
+    const [users, total] = await Promise.all([
+      User.find()
+        .select(userListFields)
+        .sort({ createdAt: -1 })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      User.countDocuments(),
+    ]);
 
     res.status(200).json({
       success: true,
       count: users.length,
+      pagination: getPaginationMeta({ ...pagination, total }),
       data: users
     });
   } catch (error) {
@@ -249,7 +312,7 @@ exports.getUsers = async (req, res) => {
  */
 exports.getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).select(userListFields).lean();
 
     if (!user) {
       return res.status(404).json({
@@ -277,10 +340,17 @@ exports.getUser = async (req, res) => {
  */
 exports.updateUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    const fieldsToUpdate = {};
+    ['name', 'email', 'isAdmin'].forEach((field) => {
+      if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+        fieldsToUpdate[field] = req.body[field];
+      }
+    });
+
+    const user = await User.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
       new: true,
       runValidators: true
-    });
+    }).select(userListFields);
 
     if (!user) {
       return res.status(404).json({

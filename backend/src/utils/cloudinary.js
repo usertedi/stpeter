@@ -26,6 +26,19 @@ exports.uploadImage = async (imagePath, folder = 'stpeter_church') => {
   }
 };
 
+exports.uploadDataUri = async (dataUri, folder = 'stpeter_church') => {
+  try {
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder,
+      use_filename: true
+    });
+    return result;
+  } catch (error) {
+    console.error('Cloudinary upload error:', error);
+    throw new Error('Image upload failed');
+  }
+};
+
 /**
  * Delete an image from Cloudinary
  * @param {string} publicId - Cloudinary public ID of the image
@@ -40,3 +53,5 @@ exports.deleteImage = async (publicId) => {
     throw new Error('Image deletion failed');
   }
 };
+
+exports.cloudinary = cloudinary;

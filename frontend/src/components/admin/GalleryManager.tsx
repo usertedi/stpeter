@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import { apiFetch, getApiErrorMessage } from '@/lib/api';
 
 // Mock data for gallery images
 const initialGalleryItems = [
@@ -57,9 +58,22 @@ type GalleryItem = {
   uploadDate: string;
 };
 
+type GalleryApiItem = GalleryItem & {
+  album?: string;
+  createdAt?: string;
+};
+
+const normalizeGalleryItem = (item: GalleryApiItem): GalleryItem => ({
+  ...item,
+  category: item.category || item.album || 'General',
+  uploadDate: item.uploadDate || item.createdAt || new Date().toISOString(),
+});
+
 export default function GalleryManager() {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(initialGalleryItems);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentItem, setCurrentItem] = useState<GalleryItem | null>(null);
   const [formData, setFormData] = useState<{
@@ -84,10 +98,10 @@ export default function GalleryManager() {
   useEffect(() => {
     const fetchGalleryItems = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/gallery`);
+        const res = await apiFetch('/gallery');
         if (!res.ok) throw new Error('Failed to load gallery');
         const data = await res.json();
-        setGalleryItems(data.data || []);
+        setGalleryItems((data.data || []).map(normalizeGalleryItem));
       } catch (error) {
         console.error('Error fetching gallery items:', error);
         setGalleryItems(initialGalleryItems);
@@ -100,6 +114,7 @@ export default function GalleryManager() {
   }, []);
 
   const handleOpenModal = (item?: GalleryItem | null) => {
+    setUploadError(null);
     if (item) {
       setCurrentItem(item);
       setFormData({
@@ -132,6 +147,7 @@ export default function GalleryManager() {
     setIsModalOpen(false);
     setCurrentItem(null);
     setImagePreview('');
+    setUploadError(null);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -171,14 +187,16 @@ export default function GalleryManager() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setIsSaving(true);
+      setUploadError(null);
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('You must be logged in to make changes');
+        setUploadError('You must be logged in to make changes');
         return;
       }
 
       if (currentItem) {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/gallery/${currentItem._id}`, {
+        const res = await apiFetch(`/gallery/${currentItem._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -191,12 +209,12 @@ export default function GalleryManager() {
             featured: formData.featured,
           }),
         });
-        if (!res.ok) throw new Error('Failed to update image');
+        if (!res.ok) throw new Error(await getApiErrorMessage(res, 'Failed to update image'));
         const data = await res.json();
-        setGalleryItems(galleryItems.map(g => g._id === currentItem._id ? data.data : g));
+        setGalleryItems(galleryItems.map(g => g._id === currentItem._id ? normalizeGalleryItem(data.data) : g));
       } else {
         if (!formData.imageFile) {
-          alert('Please select an image file');
+          setUploadError('Please select an image file');
           return;
         }
 
@@ -207,7 +225,7 @@ export default function GalleryManager() {
         body.append('album', formData.category);
         body.append('featured', String(formData.featured));
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/gallery`, {
+        const res = await apiFetch('/gallery', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -215,17 +233,18 @@ export default function GalleryManager() {
           body,
         });
         if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(errorData.error || 'Failed to upload image');
+          throw new Error(await getApiErrorMessage(res, 'Failed to upload image'));
         }
         const data = await res.json();
-        setGalleryItems([data.data, ...galleryItems]);
+        setGalleryItems([normalizeGalleryItem(data.data), ...galleryItems]);
       }
-    
-    handleCloseModal();
+      handleCloseModal();
     } catch (err) {
       console.error('Error saving gallery item:', err);
-      alert(err instanceof Error ? err.message : 'Failed to save');
+      const message = err instanceof Error ? err.message : 'Failed to save';
+      setUploadError(message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -237,13 +256,12 @@ export default function GalleryManager() {
         alert('You must be logged in to make changes');
         return;
       }
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/gallery/${id}`, {
+      const res = await apiFetch(`/gallery/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` },
       });
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Failed to delete image');
+        throw new Error(await getApiErrorMessage(res, 'Failed to delete image'));
       }
       setGalleryItems(galleryItems.filter(i => i._id !== id));
       alert('Image deleted successfully');
@@ -342,6 +360,11 @@ export default function GalleryManager() {
                     {currentItem ? 'Edit Gallery Item' : 'Add New Gallery Item'}
                   </h3>
                   <div className="space-y-4">
+                    {uploadError && (
+                      <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+                        {uploadError}
+                      </div>
+                    )}
                     <div>
                       <label htmlFor="title" className="block text-sm font-medium text-gray-700">
                         Title
@@ -429,9 +452,10 @@ export default function GalleryManager() {
                 <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                   <button
                     type="submit"
-                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    disabled={isSaving}
+                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm"
                   >
-                    {currentItem ? 'Update' : 'Add'}
+                    {isSaving ? 'Saving...' : currentItem ? 'Update' : 'Add'}
                   </button>
                   <button
                     type="button"

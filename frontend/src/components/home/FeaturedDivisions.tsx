@@ -73,8 +73,12 @@ const itemVariants = {
   },
 }
 
+const getDivisionName = (division: { name?: string; title?: string }) => (
+  division.name || division.title || 'Division'
+)
+
 export default function FeaturedDivisions() {
-  const { divisions, loading, error } = useDivisions();
+  const { divisions, loading } = useDivisions();
 
   // Use API data if available, otherwise fallback to static data
   const featuredDivisions = divisions.length > 0 ? divisions.slice(0, 4) : fallbackDivisions;
@@ -130,7 +134,9 @@ export default function FeaturedDivisions() {
                   <IconComponent size={40} />
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2 text-secondary-900">{division.name}</h3>
+                  <h3 className="text-xl font-bold mb-2 text-secondary-900">
+                    {getDivisionName(division)}
+                  </h3>
                   <p className="text-secondary-600 mb-4">{division.description}</p>
                   <Link href="/divisions" className="text-primary-600 font-medium hover:text-primary-700 inline-flex items-center">
                     Learn more

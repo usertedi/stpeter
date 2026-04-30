@@ -1,118 +1,111 @@
-# St. Peter 
+# St. Peter Orthodox Gibi Gubae
 
-
-## Features
-
-- **Home Page**: Welcoming introduction with hero section, mission statement, and links to key sections
-- **About Page**: Story of the organization with images and timeline
-- **Divisions Page**: Service divisions displayed in cards
-- **Weekly Events Page**: Dynamic event schedule
-- **Gallery Page**: Image grid with hover effects
-- **Contact Page**: Social media links, map location, and contact form
-- **Admin Portal**: Secured with JWT authentication for content management
+Official website and admin portal for Kidus Petros Gibi Gubae.
 
 ## Tech Stack
 
-### Frontend
-- Next.js (React framework)
-- TailwindCSS for styling
-- Framer Motion for animations
+- Frontend: Next.js App Router, React, TypeScript, Tailwind CSS, Framer Motion, SWR
+- Backend: Node.js, Express, MongoDB/Mongoose, JWT auth, Cloudinary, Nodemailer
+- Deployment: Vercel for the frontend, Render/Heroku or another Node host for the backend, MongoDB Atlas for the database
 
-### Backend
-- Node.js + Express.js
-- MongoDB for database
-- Cloudinary for image storage
-- JWT with bcrypt for authentication
+## Prerequisites
 
-### Deployment
-- Vercel (frontend)
-- Render/Heroku (backend)
-- MongoDB Atlas (database)
+- Node.js 20 LTS or newer
+- npm
+- MongoDB Atlas or a local MongoDB instance
+- Cloudinary account for gallery uploads
+- SMTP/email credentials for contact notifications and password reset
 
-## Setup Instructions
+## Local Development
 
-### Prerequisites
-- Node.js (v14 or later)
-- npm or yarn
-- MongoDB (local or Atlas)
-- Cloudinary account
+1. Install dependencies:
 
-### Local Development
-
-1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/stpeter-church.git
-cd stpeter-church
-```
-
-2. Install dependencies
-```bash
-# Install frontend dependencies
 cd frontend
 npm install
 
-# Install backend dependencies
 cd ../backend
 npm install
 ```
 
-3. Set up environment variables
-- Create `.env.local` in the frontend directory
-- Create `.env` in the backend directory
+2. Configure environment variables:
 
-4. Run the development servers
 ```bash
-# Run frontend
-cd frontend
-npm run dev
+cp frontend/.env.example frontend/.env.local
+cp backend/.env.example backend/.env
+```
 
-# Run backend
-cd ../backend
+Set `NEXT_PUBLIC_API_URL` in the frontend to the backend origin, usually `http://localhost:5000` locally.
+
+3. Start the backend:
+
+```bash
+cd backend
 npm run dev
 ```
 
-5. Open your browser and navigate to `http://localhost:3000`
+4. Start the frontend:
 
-### Deployment
+```bash
+cd frontend
+npm run dev
+```
 
-#### Frontend (Vercel)
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Configure environment variables
-4. Deploy
+Open `http://localhost:3000`.
 
-#### Backend (Render/Heroku)
-1. Push your code to GitHub
-2. Connect your repository to Render or Heroku
-3. Configure environment variables
-4. Deploy
+## Admin Setup
+
+The temporary admin setup endpoint is available in development. In production, only enable it briefly with:
+
+- `ENABLE_ADMIN_SETUP=true`
+- `ADMIN_SETUP_TOKEN=<one-time-secret>`
+
+Send the setup token in the `x-setup-token` header, then disable setup again after creating the first admin.
+
+## Useful Commands
+
+```bash
+# Frontend
+cd frontend
+npm run lint
+npm run build
+
+# Backend
+cd backend
+npm test
+npm run dev
+```
+
+## API Health
+
+The backend exposes:
+
+- `GET /api` for a simple API check
+- `GET /api/health` for uptime/status checks
+
+## Production Checklist
+
+- Configure all variables from `backend/.env.example` and `frontend/.env.example`.
+- Keep `ENABLE_ADMIN_SETUP=false` after bootstrapping.
+- Use a long random `JWT_SECRET`.
+- Restrict `FRONTEND_URL` and CORS origins to trusted domains.
+- Configure Cloudinary and email credentials before enabling gallery uploads/contact notifications.
+- Run CI, frontend build, and backend tests before deploy.
 
 ## Project Structure
 
-```
-/
-├── frontend/                # Next.js frontend application
-│   ├── public/             # Static assets
-│   ├── src/
-│   │   ├── app/            # App router pages
-│   │   ├── components/      # Reusable components
-│   │   ├── lib/            # Utility functions
-│   │   ├── styles/         # Global styles
-│   │   └── types/          # TypeScript types
-│   ├── .env.local          # Environment variables (gitignored)
-│   └── package.json        # Frontend dependencies
-│
-├── backend/                # Express.js backend application
-│   ├── src/
-│   │   ├── controllers/    # Route controllers
-│   │   ├── middleware/     # Custom middleware
-│   │   ├── models/         # MongoDB models
-│   │   ├── routes/         # API routes
-│   │   ├── services/       # Business logic
-│   │   ├── utils/          # Utility functions
-│   │   └── index.js        # Entry point
-│   ├── .env                # Environment variables (gitignored)
-│   └── package.json        # Backend dependencies
-│
-└── README.md              # Project documentation
+```text
+frontend/
+  src/app/          Next.js App Router pages and route handlers
+  src/components/   Public and admin React components
+  src/hooks/        SWR-backed data hooks
+  src/lib/          API and site utilities
+
+backend/
+  src/controllers/  Express route handlers
+  src/middleware/   Auth, validation, async, and error middleware
+  src/models/       Mongoose schemas and indexes
+  src/routes/       API route definitions
+  src/utils/        Shared backend helpers
+  src/server.js     Express entry point
 ```

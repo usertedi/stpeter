@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import { apiFetch, getApiErrorMessage } from '@/lib/api';
 
 type FormData = {
   name: string;
@@ -27,20 +28,20 @@ export default function ContactForm() {
     setIsSubmitting(true);
     
     try {
-      // In a real implementation, this would be an API call
-      // await fetch('/api/contact', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(data)
-      // });
+      const response = await apiFetch('/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(await getApiErrorMessage(response, 'Failed to send message'));
+      }
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success('Message sent successfully!');
+      toast.success('Message received. We will get back to you soon.');
       reset();
     } catch (error) {
-      toast.error('Failed to send message. Please try again.');
+      toast.error(error instanceof Error ? error.message : 'Failed to send message. Please try again.');
       console.error('Contact form error:', error);
     } finally {
       setIsSubmitting(false);
@@ -144,8 +145,6 @@ export default function ContactForm() {
           ) : 'Send Message'}
         </button>
       </form>
-      
-      <Toaster position="bottom-right" />
     </motion.div>
   );
 }

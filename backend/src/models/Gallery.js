@@ -33,4 +33,7 @@ const GallerySchema = new mongoose.Schema({
   }
 });
 
+GallerySchema.index({ album: 1, createdAt: -1 });
+GallerySchema.index({ featured: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Gallery', GallerySchema);

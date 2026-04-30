@@ -52,4 +52,8 @@ const EventSchema = new mongoose.Schema({
   }
 });
 
+EventSchema.index({ date: 1 });
+EventSchema.index({ isRecurring: 1, recurrencePattern: 1, date: 1 });
+EventSchema.index({ category: 1, featured: 1, date: 1 });
+
 module.exports = mongoose.model('Event', EventSchema);

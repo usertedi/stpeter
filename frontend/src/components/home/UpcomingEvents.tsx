@@ -51,7 +51,7 @@ const fallbackSpecialEvents = [
 ]
 
 export default function UpcomingEvents() {
-  const { events, loading, error } = useEvents();
+  const { events, loading } = useEvents();
   
   // Copy SpecialEvents filter: show 'special' or featured (and education as secondary)
   const specialEvents = events.length > 0 

@@ -2,9 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { 
-  HomeIcon, 
   UsersIcon, 
   CalendarIcon, 
   PhotoIcon, 
@@ -14,7 +12,7 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline';
 
-type AdminView = 'events' | 'gallery' | 'users';
+type AdminView = 'events' | 'gallery' | 'divisions' | 'contacts' | 'users';
 
 interface AdminSidebarProps {
   currentView: AdminView;
@@ -27,6 +25,8 @@ export default function AdminSidebar({ currentView, setCurrentView }: AdminSideb
   const navItems = [
     { id: 'events', name: 'Events', icon: CalendarIcon },
     { id: 'gallery', name: 'Gallery', icon: PhotoIcon },
+    { id: 'divisions', name: 'Divisions', icon: UserGroupIcon },
+    { id: 'contacts', name: 'Messages', icon: EnvelopeIcon },
     { id: 'users', name: 'Users', icon: UsersIcon },
   ];
 
@@ -62,17 +62,18 @@ export default function AdminSidebar({ currentView, setCurrentView }: AdminSideb
             {navItems.map((item) => {
               const isActive = currentView === item.id;
               return (
-                <a
+                <button
+                  type="button"
                   key={item.id}
                   onClick={() => {
                     setCurrentView(item.id as AdminView);
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`flex items-center px-4 py-3 text-sm font-medium rounded-md cursor-pointer ${isActive ? 'bg-primary-700 text-white' : 'text-primary-100 hover:bg-primary-700'}`}
+                  className={`flex w-full items-center px-4 py-3 text-sm font-medium rounded-md cursor-pointer ${isActive ? 'bg-primary-700 text-white' : 'text-primary-100 hover:bg-primary-700'}`}
                 >
                   <item.icon className="w-5 h-5 mr-3" />
                   {item.name}
-                </a>
+                </button>
               );
             })}
           </nav>
@@ -97,14 +98,15 @@ export default function AdminSidebar({ currentView, setCurrentView }: AdminSideb
           {navItems.map((item) => {
             const isActive = currentView === item.id;
             return (
-              <a
+              <button
+                type="button"
                 key={item.id}
                 onClick={() => setCurrentView(item.id as AdminView)}
-                className={`flex items-center px-4 py-3 text-sm font-medium rounded-md cursor-pointer ${isActive ? 'bg-primary-700 text-white' : 'text-primary-100 hover:bg-primary-700'}`}
+                className={`flex w-full items-center px-4 py-3 text-sm font-medium rounded-md cursor-pointer ${isActive ? 'bg-primary-700 text-white' : 'text-primary-100 hover:bg-primary-700'}`}
               >
                 <item.icon className="w-5 h-5 mr-3" />
                 {item.name}
-              </a>
+              </button>
             );
           })}
         </nav>

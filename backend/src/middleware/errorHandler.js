@@ -4,7 +4,7 @@
  */
 const errorHandler = (err, req, res, next) => {
   // Log error for server-side debugging
-  console.error(err.stack);
+  console.error(err.stack || err);
 
   // Default error object
   let error = { ...err };
@@ -28,10 +28,15 @@ const errorHandler = (err, req, res, next) => {
     error = { message, statusCode: 400 };
   }
 
+  const statusCode = error.statusCode || 500;
+  const message = statusCode === 500 && process.env.NODE_ENV === 'production'
+    ? 'Server Error'
+    : error.message || 'Server Error';
+
   // Send error response
-  res.status(error.statusCode || 500).json({
+  res.status(statusCode).json({
     success: false,
-    error: error.message || 'Server Error'
+    error: message
   });
 };
 

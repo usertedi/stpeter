@@ -4,13 +4,13 @@ import { useState } from 'react';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 // Removed: import DashboardHome from './DashboardHome';
-// Removed: import DivisionsManager from './DivisionsManager';
+import DivisionsManager from './DivisionsManager';
 import EventsManager from './EventsManager';
 import GalleryManager from './GalleryManager';
-// Removed: import ContactManager from './ContactManager';
+import ContactManager from './ContactManager';
 import UsersManager from './UsersManager';
 
-type AdminView = 'events' | 'gallery' | 'users';
+type AdminView = 'events' | 'gallery' | 'divisions' | 'contacts' | 'users';
 
 export default function AdminDashboard() {
   const [currentView, setCurrentView] = useState<AdminView>('events');
@@ -22,6 +22,10 @@ export default function AdminDashboard() {
         return <EventsManager />;
       case 'gallery':
         return <GalleryManager />;
+      case 'divisions':
+        return <DivisionsManager />;
+      case 'contacts':
+        return <ContactManager />;
       case 'users':
         return <UsersManager />;
       default:

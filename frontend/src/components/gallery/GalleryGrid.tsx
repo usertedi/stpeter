@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useGallery } from '@/hooks/useGallery';
+import type { GalleryImage } from '@/hooks/useGallery';
 
 // Fallback data in case API fails
 const fallbackImages = [
@@ -71,11 +71,13 @@ const fallbackImages = [
 
 interface GalleryGridProps {
   activeAlbum?: string;
+  images: GalleryImage[];
+  loading: boolean;
 }
 
-export default function GalleryGrid({ activeAlbum = 'all' }: GalleryGridProps) {
-  const { images, loading, error } = useGallery();
+export default function GalleryGrid({ activeAlbum = 'all', images, loading }: GalleryGridProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   // Use API data if available, otherwise fallback to static data
   const allImages = images.length > 0 ? images : fallbackImages;
@@ -87,13 +89,39 @@ export default function GalleryGrid({ activeAlbum = 'all' }: GalleryGridProps) {
 
   const openLightbox = (id: string) => {
     setSelectedImage(id);
-    document.body.style.overflow = 'hidden';
   };
 
-  const closeLightbox = () => {
+  const closeLightbox = useCallback(() => {
     setSelectedImage(null);
-    document.body.style.overflow = 'auto';
-  };
+  }, []);
+
+  const selectedGalleryImage = useMemo(
+    () => galleryImages.find(img => img._id === selectedImage),
+    [galleryImages, selectedImage]
+  );
+
+  useEffect(() => {
+    if (!selectedImage) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeLightbox();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [closeLightbox, selectedImage]);
 
   const container = {
     hidden: { opacity: 0 },
@@ -120,15 +148,6 @@ export default function GalleryGrid({ activeAlbum = 'all' }: GalleryGridProps) {
     );
   }
 
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-red-600 mb-4">Error loading gallery images: {error}</p>
-        <p className="text-gray-600">Using fallback images...</p>
-      </div>
-    );
-  }
-
   return (
     <>
       <motion.div 
@@ -138,11 +157,13 @@ export default function GalleryGrid({ activeAlbum = 'all' }: GalleryGridProps) {
         animate="show"
       >
         {galleryImages.map((image) => (
-          <motion.div 
+          <motion.button
+            type="button"
             key={image._id} 
-            className="overflow-hidden rounded-lg shadow-md cursor-pointer group"
+            className="overflow-hidden rounded-lg shadow-md cursor-pointer group text-left focus:outline-none focus:ring-4 focus:ring-primary-300"
             variants={item}
             onClick={() => openLightbox(image._id)}
+            aria-label={`Open image: ${image.title}`}
           >
             <div className="relative h-64 w-full">
               <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex items-center justify-center">
@@ -153,53 +174,52 @@ export default function GalleryGrid({ activeAlbum = 'all' }: GalleryGridProps) {
                   src={image.imageUrl} 
                   alt={image.title}
                   fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  onError={(e) => {
-                    console.error('Image failed to load:', image.imageUrl);
-                    console.error('Image error:', e);
-                    // Fallback to regular img tag
-                    const target = e.target as HTMLImageElement;
-                    const parent = target.parentElement;
-                    if (parent) {
-                      parent.innerHTML = `<img src="${image.imageUrl}" alt="${image.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />`;
-                    }
-                  }}
-                  onLoad={() => {
-                    console.log('Image loaded successfully:', image.imageUrl);
-                  }}
                 />
               </div>
             </div>
-          </motion.div>
+          </motion.button>
         ))}
       </motion.div>
 
       {/* Lightbox */}
       {selectedImage && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+        <div
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="gallery-lightbox-title"
+          aria-describedby="gallery-lightbox-description"
+          onClick={closeLightbox}
+        >
           <button 
+            ref={closeButtonRef}
+            type="button"
             onClick={closeLightbox}
-            className="absolute top-4 right-4 text-white text-4xl"
+            className="absolute top-4 right-4 text-white text-4xl focus:outline-none focus:ring-4 focus:ring-white/60 rounded"
+            aria-label="Close gallery image"
           >
             &times;
           </button>
           
-          {galleryImages.find(img => img._id === selectedImage) && (
-            <div className="max-w-4xl w-full">
+          {selectedGalleryImage && (
+            <div className="max-w-4xl w-full" onClick={(event) => event.stopPropagation()}>
               <div className="relative h-[70vh] w-full">
                 <Image 
-                  src={galleryImages.find(img => img._id === selectedImage)?.imageUrl || ''} 
-                  alt={galleryImages.find(img => img._id === selectedImage)?.title || ''}
+                  src={selectedGalleryImage.imageUrl} 
+                  alt={selectedGalleryImage.title}
                   fill
+                  sizes="100vw"
                   className="object-contain"
                 />
               </div>
               <div className="text-white mt-4">
-                <h3 className="text-xl font-bold">
-                  {galleryImages.find(img => img._id === selectedImage)?.title}
+                <h3 id="gallery-lightbox-title" className="text-xl font-bold">
+                  {selectedGalleryImage.title}
                 </h3>
-                <p className="text-gray-300">
-                  {galleryImages.find(img => img._id === selectedImage)?.description}
+                <p id="gallery-lightbox-description" className="text-gray-300">
+                  {selectedGalleryImage.description}
                 </p>
               </div>
             </div>

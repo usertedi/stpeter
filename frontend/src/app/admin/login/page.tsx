@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
+import { apiFetch, getApiErrorMessage } from '@/lib/api';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState<string>('');
@@ -18,43 +20,36 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      console.log('Attempting login with URL:', `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`);
-      
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+      const res = await apiFetch('/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      
-      console.log('Response status:', res.status);
-      console.log('Response headers:', res.headers);
-      
+
+      if (!res.ok) {
+        throw new Error(await getApiErrorMessage(res, 'Login failed'));
+      }
+
       const data = await res.json();
-      console.log('Response data:', data);
 
       if (res.ok && data.success && data.token) {
-        console.log('Login successful, storing token:', data.token);
         // Store token in both localStorage and cookies for compatibility
         localStorage.setItem('token', data.token);
         // Set cookie with proper options (remove secure flag for development)
         const isProduction = window.location.protocol === 'https:';
         document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}${isProduction ? '; secure' : ''}; samesite=strict`;
-        console.log('Token stored, redirecting to admin dashboard');
-        console.log('Current URL before redirect:', window.location.href);
-        
+
         // Use replace instead of push to prevent back button issues
         // Add a small delay to ensure cookie is set
         setTimeout(() => {
-          console.log('Redirecting to /admin');
           router.replace('/admin');
         }, 100);
       } else {
-        console.log('Login failed:', data);
         setError(data.error || 'Invalid email or password');
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('An error occurred during login. Please check the console for details.');
+      setError(err instanceof Error ? err.message : 'An error occurred during login.');
     } finally {
       setLoading(false);
     }
@@ -121,6 +116,12 @@ export default function AdminLogin() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+          </div>
+
+          <div className="text-right">
+            <Link href="/admin/forgot-password" className="text-sm font-medium text-primary-600 hover:text-primary-700">
+              Forgot password?
+            </Link>
           </div>
 
           <div>

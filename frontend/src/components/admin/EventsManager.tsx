@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { apiFetch, getApiErrorMessage } from '@/lib/api';
 
 // Mock data for events
 const initialEvents = [
@@ -84,7 +85,7 @@ export default function EventsManager() {
           return;
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events`, {
+        const response = await apiFetch('/events', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -163,9 +164,7 @@ export default function EventsManager() {
 
       if (currentEvent) {
         // Update existing event
-        const updateUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/events/${currentEvent._id}`;
-        console.log('Updating event via:', updateUrl);
-        const response = await fetch(updateUrl, {
+        const response = await apiFetch(`/events/${currentEvent._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -175,12 +174,7 @@ export default function EventsManager() {
         });
 
         if (!response.ok) {
-          let message = 'Failed to update event';
-          try {
-            const err = await response.json();
-            message = err?.error || message;
-          } catch {}
-          throw new Error(`${message} (status ${response.status})`);
+          throw new Error(await getApiErrorMessage(response, 'Failed to update event'));
         }
 
         const updatedEvent = await response.json();
@@ -190,9 +184,7 @@ export default function EventsManager() {
         setEvents(updatedEvents);
       } else {
         // Add new event
-        const createUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/events`;
-        console.log('Creating event via:', createUrl);
-        const response = await fetch(createUrl, {
+        const response = await apiFetch('/events', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -202,12 +194,7 @@ export default function EventsManager() {
         });
 
         if (!response.ok) {
-          let message = 'Failed to create event';
-          try {
-            const err = await response.json();
-            message = err?.error || message;
-          } catch {}
-          throw new Error(`${message} (status ${response.status})`);
+          throw new Error(await getApiErrorMessage(response, 'Failed to create event'));
         }
 
         const newEvent = await response.json();
@@ -233,9 +220,7 @@ export default function EventsManager() {
         return;
       }
 
-      const deleteUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/events/${id}`;
-      console.log('Deleting event via:', deleteUrl);
-      const response = await fetch(deleteUrl, {
+      const response = await apiFetch(`/events/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -243,12 +228,7 @@ export default function EventsManager() {
       });
 
       if (!response.ok) {
-        let message = 'Failed to delete event';
-        try {
-          const err = await response.json();
-          message = err?.error || message;
-        } catch {}
-        throw new Error(`${message} (status ${response.status})`);
+        throw new Error(await getApiErrorMessage(response, 'Failed to delete event'));
       }
 
       const updatedEvents = events.filter((evt) => evt._id !== id);

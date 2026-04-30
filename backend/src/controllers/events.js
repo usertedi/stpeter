@@ -1,4 +1,7 @@
 const Event = require('../models/Event');
+const { getPagination, getPaginationMeta } = require('../utils/pagination');
+
+const eventListFields = 'title description date time location isRecurring recurrencePattern image featured category createdAt';
 
 /**
  * @desc    Get all events
@@ -7,11 +10,21 @@ const Event = require('../models/Event');
  */
 exports.getEvents = async (req, res) => {
   try {
-    const events = await Event.find().sort({ date: 1 });
+    const pagination = getPagination(req.query, { defaultLimit: 50, maxLimit: 100 });
+    const [events, total] = await Promise.all([
+      Event.find()
+        .select(eventListFields)
+        .sort({ date: 1 })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      Event.countDocuments(),
+    ]);
 
     res.status(200).json({
       success: true,
       count: events.length,
+      pagination: getPaginationMeta({ ...pagination, total }),
       data: events
     });
   } catch (error) {
@@ -34,7 +47,11 @@ exports.getUpcomingEvents = async (req, res) => {
 
     const events = await Event.find({
       date: { $gte: today }
-    }).sort({ date: 1 }).limit(5);
+    })
+      .select(eventListFields)
+      .sort({ date: 1 })
+      .limit(5)
+      .lean();
 
     res.status(200).json({
       success: true,
@@ -59,7 +76,10 @@ exports.getWeeklyEvents = async (req, res) => {
     const events = await Event.find({
       isRecurring: true,
       recurrencePattern: 'weekly'
-    }).sort({ date: 1 });
+    })
+      .select(eventListFields)
+      .sort({ date: 1 })
+      .lean();
 
     res.status(200).json({
       success: true,
@@ -81,7 +101,7 @@ exports.getWeeklyEvents = async (req, res) => {
  */
 exports.getEvent = async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id);
+    const event = await Event.findById(req.params.id).select(eventListFields).lean();
 
     if (!event) {
       return res.status(404).json({

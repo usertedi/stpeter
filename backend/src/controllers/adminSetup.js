@@ -1,5 +1,4 @@
 const User = require('../models/User');
-const bcrypt = require('bcryptjs');
 
 /**
  * @desc    Create initial admin user (TEMPORARY - Remove after use)
@@ -8,6 +7,17 @@ const bcrypt = require('bcryptjs');
  */
 exports.createInitialAdmin = async (req, res) => {
   try {
+    if (process.env.NODE_ENV === 'production') {
+      const setupToken = req.headers['x-setup-token'];
+
+      if (!process.env.ADMIN_SETUP_TOKEN || setupToken !== process.env.ADMIN_SETUP_TOKEN) {
+        return res.status(403).json({
+          success: false,
+          error: 'Admin setup is not authorized'
+        });
+      }
+    }
+
     const { name, email, password } = req.body;
 
     // Validate required fields

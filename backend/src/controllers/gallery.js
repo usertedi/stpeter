@@ -1,12 +1,8 @@
 const Gallery = require('../models/Gallery');
-const cloudinary = require('cloudinary').v2;
+const { uploadDataUri, deleteImage } = require('../utils/cloudinary');
+const { getPagination, getPaginationMeta } = require('../utils/pagination');
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
+const galleryListFields = 'title description album imageUrl cloudinaryId featured createdAt';
 
 /**
  * @desc    Get all gallery items
@@ -15,17 +11,27 @@ cloudinary.config({
  */
 exports.getGalleryItems = async (req, res) => {
   try {
+    const pagination = getPagination(req.query, { defaultLimit: 60, maxLimit: 120 });
     // Filter by album if provided
     const filter = {};
     if (req.query.album) {
       filter.album = req.query.album;
     }
 
-    const galleryItems = await Gallery.find(filter).sort({ createdAt: -1 });
+    const [galleryItems, total] = await Promise.all([
+      Gallery.find(filter)
+        .select(galleryListFields)
+        .sort({ createdAt: -1 })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      Gallery.countDocuments(filter),
+    ]);
 
     res.status(200).json({
       success: true,
       count: galleryItems.length,
+      pagination: getPaginationMeta({ ...pagination, total }),
       data: galleryItems
     });
   } catch (error) {
@@ -65,7 +71,7 @@ exports.getAlbums = async (req, res) => {
  */
 exports.getGalleryItem = async (req, res) => {
   try {
-    const galleryItem = await Gallery.findById(req.params.id);
+    const galleryItem = await Gallery.findById(req.params.id).select(galleryListFields).lean();
 
     if (!galleryItem) {
       return res.status(404).json({
@@ -119,12 +125,9 @@ exports.uploadImage = async (req, res, next) => {
     }
 
     // Upload image to Cloudinary using data buffer
-    const result = await cloudinary.uploader.upload(
+    const result = await uploadDataUri(
       `data:${file.mimetype};base64,${file.data.toString('base64')}`,
-      {
-        folder: 'stpeter_church/gallery',
-        use_filename: true
-      }
+      'stpeter_church/gallery'
     );
 
     // Add Cloudinary data to request body
@@ -209,10 +212,10 @@ exports.deleteGalleryItem = async (req, res) => {
     }
 
     // Delete image from Cloudinary
-    await cloudinary.uploader.destroy(galleryItem.cloudinaryId);
+    await deleteImage(galleryItem.cloudinaryId);
 
     // Delete gallery item from database
-    await galleryItem.remove();
+    await galleryItem.deleteOne();
 
     res.status(200).json({
       success: true,

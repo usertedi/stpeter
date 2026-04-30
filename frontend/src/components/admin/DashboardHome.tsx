@@ -97,7 +97,7 @@ export default function DashboardHome() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Dashboard Overview</h2>
-        <p className="text-gray-600 mb-6">Welcome to the admin dashboard. Here's an overview of your website content.</p>
+        <p className="text-gray-600 mb-6">Welcome to the admin dashboard. Here&apos;s an overview of your website content.</p>
       </div>
 
       {isLoading ? (

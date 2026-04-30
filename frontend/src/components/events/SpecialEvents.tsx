@@ -16,7 +16,7 @@ const fallbackSpecialEvents = [
 ]
 
 export default function SpecialEvents() {
-  const { events, loading, error } = useEvents();
+  const { events, loading } = useEvents();
   
   // Filter for special events or use fallback data
   const specialEvents = events.length > 0 

@@ -40,4 +40,7 @@ const ContactSchema = new mongoose.Schema({
   }
 });
 
+ContactSchema.index({ createdAt: -1 });
+ContactSchema.index({ status: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Contact', ContactSchema);

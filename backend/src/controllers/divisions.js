@@ -1,4 +1,7 @@
 const Division = require('../models/Division');
+const { getPagination, getPaginationMeta } = require('../utils/pagination');
+
+const divisionListFields = 'title name description icon color leaders meetingTimes createdAt';
 
 /**
  * @desc    Get all divisions
@@ -7,11 +10,21 @@ const Division = require('../models/Division');
  */
 exports.getDivisions = async (req, res) => {
   try {
-    const divisions = await Division.find();
+    const pagination = getPagination(req.query, { defaultLimit: 50, maxLimit: 100 });
+    const [divisions, total] = await Promise.all([
+      Division.find()
+        .select(divisionListFields)
+        .sort({ createdAt: 1 })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      Division.countDocuments(),
+    ]);
 
     res.status(200).json({
       success: true,
       count: divisions.length,
+      pagination: getPaginationMeta({ ...pagination, total }),
       data: divisions
     });
   } catch (error) {
@@ -29,7 +42,7 @@ exports.getDivisions = async (req, res) => {
  */
 exports.getDivision = async (req, res) => {
   try {
-    const division = await Division.findById(req.params.id);
+    const division = await Division.findById(req.params.id).select(divisionListFields).lean();
 
     if (!division) {
       return res.status(404).json({

@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import useSWR from 'swr';
+import { apiJsonFetcher } from '@/lib/api';
 
 export interface Division {
   _id: string;
-  name: string;
+  name?: string;
+  title?: string;
   description: string;
   icon: string;
   color: string;
@@ -12,35 +14,14 @@ export interface Division {
 }
 
 export const useDivisions = () => {
-  const [divisions, setDivisions] = useState<Division[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, error, isLoading, mutate } = useSWR<Division[]>('/divisions', apiJsonFetcher, {
+    keepPreviousData: true,
+  });
 
-  const fetchDivisions = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/divisions`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch divisions');
-      }
-      
-      const data = await response.json();
-      setDivisions(data.data || []);
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching divisions:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch divisions');
-      // Fallback to empty array on error
-      setDivisions([]);
-    } finally {
-      setLoading(false);
-    }
+  return {
+    divisions: data ?? [],
+    loading: isLoading,
+    error: error instanceof Error ? error.message : null,
+    refresh: mutate,
   };
-
-  useEffect(() => {
-    fetchDivisions();
-  }, []);
-
-  return { divisions, loading, error, refresh: fetchDivisions };
 };

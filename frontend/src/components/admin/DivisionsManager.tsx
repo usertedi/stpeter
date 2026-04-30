@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { apiFetch, getApiErrorMessage } from '@/lib/api';
 
 // Mock data for divisions
 const initialDivisions = [
@@ -73,7 +74,7 @@ export default function DivisionsManager() {
           return;
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/divisions`, {
+        const response = await apiFetch('/divisions', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -134,7 +135,7 @@ export default function DivisionsManager() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -144,9 +145,7 @@ export default function DivisionsManager() {
 
       if (currentDivision) {
         // Update existing division
-        const updateUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/divisions/${currentDivision._id}`;
-        console.log('Updating division via:', updateUrl);
-        const response = await fetch(updateUrl, {
+        const response = await apiFetch(`/divisions/${currentDivision._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -156,12 +155,7 @@ export default function DivisionsManager() {
         });
 
         if (!response.ok) {
-          let message = 'Failed to update division';
-          try {
-            const err = await response.json();
-            message = err?.error || message;
-          } catch {}
-          throw new Error(`${message} (status ${response.status})`);
+          throw new Error(await getApiErrorMessage(response, 'Failed to update division'));
         }
 
         const updatedDivision = await response.json();
@@ -171,9 +165,7 @@ export default function DivisionsManager() {
         setDivisions(updatedDivisions);
       } else {
         // Add new division
-        const createUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/divisions`;
-        console.log('Creating division via:', createUrl);
-        const response = await fetch(createUrl, {
+        const response = await apiFetch('/divisions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -183,18 +175,13 @@ export default function DivisionsManager() {
         });
 
         if (!response.ok) {
-          let message = 'Failed to create division';
-          try {
-            const err = await response.json();
-            message = err?.error || message;
-          } catch {}
-          throw new Error(`${message} (status ${response.status})`);
+          throw new Error(await getApiErrorMessage(response, 'Failed to create division'));
         }
 
         const newDivision = await response.json();
         setDivisions([...divisions, newDivision.data]);
       }
-      
+
       handleCloseModal();
     } catch (error) {
       console.error('Error saving division:', error);
@@ -214,9 +201,7 @@ export default function DivisionsManager() {
         return;
       }
 
-      const deleteUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/divisions/${id}`;
-      console.log('Deleting division via:', deleteUrl);
-      const response = await fetch(deleteUrl, {
+      const response = await apiFetch(`/divisions/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -224,12 +209,7 @@ export default function DivisionsManager() {
       });
 
       if (!response.ok) {
-        let message = 'Failed to delete division';
-        try {
-          const err = await response.json();
-          message = err?.error || message;
-        } catch {}
-        throw new Error(`${message} (status ${response.status})`);
+        throw new Error(await getApiErrorMessage(response, 'Failed to delete division'));
       }
 
       const updatedDivisions = divisions.filter((div) => div._id !== id);

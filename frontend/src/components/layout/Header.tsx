@@ -19,6 +19,10 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
 
+  if (pathname.startsWith('/admin')) {
+    return null
+  }
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <nav className="container-custom flex items-center justify-between py-4" aria-label="Global">

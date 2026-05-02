@@ -1,7 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { FaFacebook, FaTwitter, FaEnvelope } from "react-icons/fa";
 
 const leadershipTeam = [
   {
@@ -9,21 +8,12 @@ const leadershipTeam = [
     title: "አገልጋዮች",
     bio: "በ 2016 ላይ ጊቢ ጉባኤው ስራውን ያለማቋረጥ እንዲያደርግ ሲሰሩ የነበሩ አገልጋዮች።",
     image: "/images/2016lead.jpg",
-    social: {
-      email: "frjohn@stpeterorthodox.org",
-      facebook: "https://facebook.com",
-    },
   },
   {
     name: "የ 2017 ስራ አስፈፃሚዎች",
     title: "አገልጋዮች",
     bio: " በ 2017 ላይ ጊቢ ጉባኤው ስራውን ያለማቋረጥ እንዲያደርግ ሲሰሩ የነበሩ አገልጋዮች።",
     image: "/images/2017lead.jpg",
-    social: {
-      email: "council@stpeterorthodox.org",
-      facebook: "https://facebook.com",
-      twitter: "https://twitter.com",
-    },
   },
 ];
 
@@ -38,7 +28,7 @@ export default function Leadership() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
           {leadershipTeam.map((leader, index) => (
             <motion.div
               key={leader.name}
@@ -63,38 +53,7 @@ export default function Leadership() {
                 <p className="text-primary-600 font-medium mb-3">
                   {leader.title}
                 </p>
-                <p className="text-secondary-600 mb-4">{leader.bio}</p>
-
-                <div className="flex space-x-3">
-                  {leader.social.email && (
-                    <a
-                      href={`mailto:${leader.social.email}`}
-                      className="text-secondary-400 hover:text-primary-600 transition-colors"
-                    >
-                      <FaEnvelope size={18} />
-                    </a>
-                  )}
-                  {leader.social.facebook && (
-                    <a
-                      href={leader.social.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-secondary-400 hover:text-primary-600 transition-colors"
-                    >
-                      <FaFacebook size={18} />
-                    </a>
-                  )}
-                  {leader.social.twitter && (
-                    <a
-                      href={leader.social.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-secondary-400 hover:text-primary-600 transition-colors"
-                    >
-                      <FaTwitter size={18} />
-                    </a>
-                  )}
-                </div>
+                <p className="text-secondary-600">{leader.bio}</p>
               </div>
             </motion.div>
           ))}

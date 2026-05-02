@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { PhoneIcon, EnvelopeIcon, MapPinIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { ChatBubbleLeftRightIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
 
 export default function ContactInfo() {
   return (
@@ -15,7 +15,7 @@ export default function ContactInfo() {
       
       <div className="space-y-6">
         <div className="flex items-start">
-          <MapPinIcon className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+          <MapPinIcon className="h-6 w-6 text-primary-600 flex-shrink-0 mt-1" />
           <div className="ml-4">
             <h3 className="font-bold text-gray-800">Address</h3>
             <p className="text-gray-600">CHS<br />Sefere selam campus</p>
@@ -23,7 +23,7 @@ export default function ContactInfo() {
         </div>
         
         <div className="flex items-start">
-          <PhoneIcon className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+          <PhoneIcon className="h-6 w-6 text-primary-600 flex-shrink-0 mt-1" />
           <div className="ml-4">
             <h3 className="font-bold text-gray-800">Phone</h3>
             <p className="text-gray-600">0946406302 or 0972547887</p>
@@ -31,10 +31,17 @@ export default function ContactInfo() {
         </div>
         
         <div className="flex items-start">
-          <EnvelopeIcon className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+          <ChatBubbleLeftRightIcon className="h-6 w-6 text-primary-600 flex-shrink-0 mt-1" />
           <div className="ml-4">
-            <h3 className="font-bold text-gray-800">Email</h3>
-            <p className="text-gray-600">t.me/kidus_petros_mereja</p>
+            <h3 className="font-bold text-gray-800">Telegram</h3>
+            <a
+              href="https://t.me/kidus_petros_mereja"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="break-all text-gray-600 hover:text-primary-600 hover:underline"
+            >
+              t.me/kidus_petros_mereja
+            </a>
           </div>
         </div>
         

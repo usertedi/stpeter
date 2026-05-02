@@ -81,8 +81,8 @@ export default function Timeline() {
               >
                 <div className="md:w-1/2"></div>
                 <div className="flex items-center justify-center">
-                  <div className="w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center relative z-10">
-                    <span className="text-sm font-bold">{event.year}</span>
+                  <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-primary-600 px-2 text-center text-white shadow-sm">
+                    <span className="text-sm font-bold leading-tight">{event.year}</span>
                   </div>
                 </div>
                 <div className="md:w-1/2 pt-4 md:pt-0 md:px-6">

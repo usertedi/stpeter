@@ -30,15 +30,31 @@ const merriweather = Merriweather({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: siteConfig.openGraphSiteName,
+  authors: [{ name: siteConfig.openGraphSiteName, url: siteUrl }],
+  creator: siteConfig.openGraphSiteName,
+  publisher: siteConfig.openGraphSiteName,
+  category: 'Ethiopian Orthodox Tewahedo student fellowship',
   title: {
     default: siteConfig.metaTitleDefault,
     template: `%s | ${siteConfig.metaTitleTemplate}`,
   },
   description: siteConfig.defaultDescription,
   keywords: [...siteConfig.keywords],
+  alternates: {
+    canonical: '/',
+  },
+  referrer: 'origin-when-cross-origin',
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
   },
   openGraph: {
     title: originalMeta.layoutOpenGraph.title,
@@ -46,6 +62,7 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: siteConfig.openGraphSiteName,
     locale: 'am_ET',
+    alternateLocale: ['en_US'],
     type: 'website',
     images: [ogImage],
   },
@@ -54,6 +71,9 @@ export const metadata: Metadata = {
     title: originalMeta.layoutOpenGraph.title,
     description: originalMeta.layoutOpenGraph.description,
     images: [ogImage.url],
+  },
+  other: {
+    'content-language': 'am, en',
   },
 }
 

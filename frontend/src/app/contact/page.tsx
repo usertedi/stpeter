@@ -44,6 +44,7 @@ export default function ContactPage() {
       addressCountry: siteConfig.address.addressCountry,
     },
     telephone: siteConfig.telephone.join(', '),
+    email: siteConfig.email,
   }
 
   return (

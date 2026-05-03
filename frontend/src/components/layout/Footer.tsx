@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { FaTelegram, FaPhone, FaMapMarkerAlt } from 'react-icons/fa'
+import { FaEnvelope, FaTelegram, FaPhone, FaMapMarkerAlt } from 'react-icons/fa'
+
+import { siteConfig } from '@/lib/site'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -62,6 +64,12 @@ export default function Footer() {
               <li className="flex items-start">
                 <FaPhone className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />
                 <span className="text-secondary-300">0946406302 or 0972547887</span>
+              </li>
+              <li className="flex items-start">
+                <FaEnvelope className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />
+                <a href={`mailto:${siteConfig.email}`} className="break-words text-secondary-300 transition-colors hover:text-white">
+                  {siteConfig.email}
+                </a>
               </li>
               <li className="flex items-start">
                 <FaTelegram className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />

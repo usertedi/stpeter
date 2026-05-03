@@ -1,7 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ChatBubbleLeftRightIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { ChatBubbleLeftRightIcon, EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
+
+import { siteConfig } from '@/lib/site';
 
 export default function ContactInfo() {
   return (
@@ -30,6 +32,19 @@ export default function ContactInfo() {
           </div>
         </div>
         
+        <div className="flex items-start">
+          <EnvelopeIcon className="h-6 w-6 text-primary-600 flex-shrink-0 mt-1" />
+          <div className="ml-4">
+            <h3 className="font-bold text-gray-800">Email</h3>
+            <a
+              href={`mailto:${siteConfig.email}`}
+              className="break-all text-gray-600 hover:text-primary-600 hover:underline"
+            >
+              {siteConfig.email}
+            </a>
+          </div>
+        </div>
+
         <div className="flex items-start">
           <ChatBubbleLeftRightIcon className="h-6 w-6 text-primary-600 flex-shrink-0 mt-1" />
           <div className="ml-4">

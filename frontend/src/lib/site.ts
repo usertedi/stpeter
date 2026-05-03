@@ -1,76 +1,95 @@
+const productionSiteUrl = 'https://kiduspetros.com'
+
 /**
- * Canonical site URL — set NEXT_PUBLIC_SITE_URL in production (e.g. Vercel).
+ * Canonical site URL — set NEXT_PUBLIC_SITE_URL in production if the origin changes.
  */
 export const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://stpeter.vercel.app'
+  process.env.NEXT_PUBLIC_SITE_URL || productionSiteUrl
 ).replace(/\/$/, '')
 
-/** Intentionally crafted keywords first; then supporting phrases. */
+/** Intentionally crafted search terms first; then supporting English and Amharic variants. */
 export const siteKeywords = [
+  'kiduspetros.com',
+  'Kidus Petros',
   'kidus petros gibi gubae',
-  'Gibi Gubae petros',
-  'st peter gibi gubae',
-  'gibi gubae betekrstian',
-  'orthodox gibi gubae',
-  'ቅዱስ ጴጥሮስ ጊቢ ጉባኤ',
   'Kidus Petros Gibi Gubae',
+  'Qidus Petros',
+  'Qidus Petros Gibi Gubae',
   'Gebi Gubae',
-  'St. Peter Orthodox gibi gubae',
+  'Gibi Gubae Petros',
+  'St. Peter Gibi Gubae',
+  'St. Peter Orthodox Gibi Gubae',
+  'St Peter Ethiopian Orthodox',
   'Ethiopian Orthodox Tewahedo',
+  'Ethiopian Orthodox Tewahedo Church',
+  'Orthodox Christian student fellowship',
+  'Addis Ababa University Gibi Gubae',
+  'CHS Gibi Gubae',
   'CHS Sefere Selam',
-  'Sefere Selam church',
+  'Sefere Selam campus',
+  'ቅዱስ ጴጥሮስ',
+  'ቅዱስ ጴጥሮስ ጊቢ ጉባኤ',
+  'ቂዱስ ጴጥሮስ ጊቢ ጉባኤ',
+  'ጊቢ ጉባኤ',
+  'ግቢ ጉባኤ',
+  'ኦርቶዶክስ ጊቢ ጉባኤ',
+  'የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ',
+  'ሰፈረ ሰላም',
+  'ጤና ሳይንስ ጊቢ ጉባኤ',
 ] as const
 
 /**
- * Meta titles & descriptions: restored verbatim from the app files before the SEO refactor
- * (root layout + each route’s `metadata`). Gallery had no metadata then — see `gallery` below.
+ * Meta titles & descriptions tuned for broad English and Amharic discovery without keyword stuffing.
  */
 export const originalMeta = {
   /** Root `layout.tsx` */
   layoutDescription:
-    'Official website of kidus petros gibi gubae (Gebi Gubae). Service times, history, events, and Orthodox Christian faith.',
+    'Official website of Kidus Petros Gibi Gubae, the Ethiopian Orthodox Tewahedo student fellowship at CHS Sefere Selam in Addis Ababa. Find faith teaching, events, gallery updates, history, and contact information in English and Amharic.',
   /** `app/page.tsx` */
   homeDescription:
-    'Welcome to kidus petros Gibi Gubae. Learn about our mission, services, events, and Orthodox Christian faith.',
+    'Welcome to Kidus Petros Gibi Gubae. Learn about our Ethiopian Orthodox Tewahedo faith, student fellowship, weekly services, divisions, events, and community life at Sefere Selam.',
   /** Root `layout.tsx` openGraph (separate from `metadata.description` in the original file). */
   layoutOpenGraph: {
-    title: 'Kidus Petros Gibi Gubae',
+    title: 'Kidus Petros Gibi Gubae | ቅዱስ ጴጥሮስ ጊቢ ጉባኤ',
     description:
-      'Official website of Kidus Petros Gibi Gubae. Service times, history, and events.',
+      'Official home of Kidus Petros Gibi Gubae, an Ethiopian Orthodox Tewahedo student fellowship sharing services, history, events, and updates.',
   },
   about: {
-    title: 'About Us | St. Peter Orthodox Church',
+    title: 'About Kidus Petros Gibi Gubae | ቅዱስ ጴጥሮስ',
     description:
-      'Learn about the history, mission, and leadership of St. Peter Orthodox Church.',
+      'Learn the history, mission, leadership, and Orthodox Christian foundation of Kidus Petros Gibi Gubae at CHS Sefere Selam in Addis Ababa.',
   },
   events: {
-    title: 'Events | St. Peter Orthodox Church',
-    description: 'Weekly schedule and special events at St. Peter Orthodox Church.',
+    title: 'Events and Weekly Services | Kidus Petros Gibi Gubae',
+    description:
+      'View weekly services, teaching programs, fellowship gatherings, and special Ethiopian Orthodox events from Kidus Petros Gibi Gubae.',
   },
   divisions: {
-    title: 'Our Divisions | St. Peter Orthodox Church',
+    title: 'Divisions and Ministries | Kidus Petros Gibi Gubae',
     description:
-      'Explore the various ministries and service divisions of St. Peter Orthodox Church.',
+      'Explore the service divisions, ministries, media work, teaching groups, and student-led programs of Kidus Petros Gibi Gubae.',
   },
   contact: {
-    title: 'Contact Us | St. Peter Orthodox Church',
+    title: 'Contact Kidus Petros Gibi Gubae | Addis Ababa',
     description:
-      'Get in touch with St. Peter Orthodox Church. Find our location, service times, and contact information.',
+      'Contact Kidus Petros Gibi Gubae, find the CHS Sefere Selam campus location in Addis Ababa, and reach the fellowship by phone or social channels.',
   },
   /** No `metadata` on `gallery/page.tsx` originally; same naming as other routes. */
   gallery: {
-    title: 'Gallery | St. Peter Orthodox Church',
-    description: 'Photos from St. Peter Orthodox Church.',
+    title: 'Gallery | Kidus Petros Gibi Gubae',
+    description:
+      'Browse photos and media from Kidus Petros Gibi Gubae services, events, teaching programs, and Ethiopian Orthodox fellowship life.',
   },
 } as const
 
 export const siteConfig = {
+  domain: 'kiduspetros.com',
   name: 'ቅዱስ ጴጥሮስ ጊቢ ጉባኤ',
   nameLatin: 'Kidus Petros Gibi Gubae',
   nameEnglish: 'St. Peter Orthodox Gibi Gubae',
 
-  metaTitleDefault: 'kidus petros gibi gubae – Gebi Gubae',
-  metaTitleTemplate: 'St. Peter Orthodox gibi gubae',
+  metaTitleDefault: 'Kidus Petros Gibi Gubae | ቅዱስ ጴጥሮስ ጊቢ ጉባኤ',
+  metaTitleTemplate: 'Kidus Petros Gibi Gubae',
 
   defaultDescription: originalMeta.layoutDescription,
 
@@ -98,5 +117,5 @@ export const siteConfig = {
     addressCountry: 'ET',
   },
   telephone: ['+251946406302', '+251972547887'],
-  email: 'info@stpeterorthodox.org',
+  email: 'contact@kiduspetros.com',
 } as const

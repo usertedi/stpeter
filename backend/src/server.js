@@ -28,7 +28,9 @@ app.use(fileUpload({
 const corsOptions = {
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:3000',
-    'https://stpeter.vercel.app', // Your Vercel frontend URL
+    'https://kiduspetros.com',
+    'https://www.kiduspetros.com',
+    'https://stpeter.vercel.app', // Previous Vercel frontend URL
     /\.vercel\.app$/, // Allow all Vercel preview deployments
   ],
   credentials: true,

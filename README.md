@@ -1,6 +1,6 @@
 # St. Peter Orthodox Gibi Gubae
 
-Official website and admin portal for Kidus Petros Gibi Gubae.
+Official website and admin portal for Kidus Petros Gibi Gubae at https://kiduspetros.com.
 
 ## Tech Stack
 
@@ -88,7 +88,8 @@ The backend exposes:
 - Configure all variables from `backend/.env.example` and `frontend/.env.example`.
 - Keep `ENABLE_ADMIN_SETUP=false` after bootstrapping.
 - Use a long random `JWT_SECRET`.
-- Restrict `FRONTEND_URL` and CORS origins to trusted domains.
+- Set `NEXT_PUBLIC_SITE_URL=https://kiduspetros.com` so canonical URLs, sitemap, and JSON-LD use the public domain.
+- Restrict `FRONTEND_URL` and CORS origins to trusted domains, including `https://kiduspetros.com`.
 - Configure Cloudinary and email credentials before enabling gallery uploads/contact notifications.
 - Run CI, frontend build, and backend tests before deploy.
 

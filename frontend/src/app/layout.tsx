@@ -72,6 +72,9 @@ export const metadata: Metadata = {
     description: originalMeta.layoutOpenGraph.description,
     images: [ogImage.url],
   },
+  verification: {
+    google: 'FoZthXo7Ex0BI6HwrGtThORGxZplYlCvCPXKIsDwgws',
+  },
   other: {
     'content-language': 'am, en',
   },

@@ -1,26 +1,8 @@
 "use client";
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { FaPrayingHands, FaHandsHelping, FaMusic, FaBook } from 'react-icons/fa'
 import { useDivisions } from '@/hooks/useDivisions'
-
-// Icon mapping for divisions
-const iconMap: { [key: string]: any } = {
-  'worship': FaPrayingHands,
-  'outreach': FaHandsHelping,
-  'music': FaMusic,
-  'education': FaBook,
-  'default': FaPrayingHands,
-};
-
-// Color mapping for divisions
-const colorMap: { [key: string]: string } = {
-  'worship': 'bg-primary-100 text-primary-700',
-  'outreach': 'bg-pink-100 text-rose-800',
-  'music': 'bg-secondary-100 text-secondary-700',
-  'education': 'bg-primary-100 text-primary-700',
-  'default': 'bg-primary-100 text-primary-700',
-};
+import { divisionColorClassMap, divisionIconMap } from '@/lib/divisionDisplay'
 
 // Fallback data in case API fails
 const fallbackDivisions = [
@@ -121,8 +103,8 @@ export default function FeaturedDivisions() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {featuredDivisions.map((division) => {
-            const IconComponent = iconMap[division.icon] || iconMap['default'];
-            const colorClass = colorMap[division.color] || colorMap['default'];
+            const IconComponent = divisionIconMap[division.icon] || divisionIconMap['worship'];
+            const colorClass = divisionColorClassMap[division.color] || divisionColorClassMap.default;
 
             return (
               <motion.div

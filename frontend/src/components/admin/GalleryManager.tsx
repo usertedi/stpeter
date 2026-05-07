@@ -26,10 +26,10 @@ const initialGalleryItems = [
   },
   {
     _id: '3',
-    title: 'Youth Group Activities',
-    description: 'Our youth group during various activities and events',
+    title: 'Community Gathering',
+    description: 'Fellowship and activities with our congregation',
     imageUrl: '/images/placeholder-3.jpg',
-    category: 'Youth',
+    category: 'Community',
     featured: false,
     uploadDate: '2023-05-10',
   },
@@ -45,7 +45,7 @@ const initialGalleryItems = [
 ];
 
 // Categories for gallery items
-const categories = ['Services', 'Facilities', 'Youth', 'Holidays', 'Community', 'Other'];
+const categories = ['Services', 'Facilities', 'Holidays', 'Community', 'Other'];
 
 // Define types for our data
 type GalleryItem = {
@@ -65,6 +65,7 @@ type GalleryApiItem = GalleryItem & {
 
 const normalizeGalleryItem = (item: GalleryApiItem): GalleryItem => ({
   ...item,
+  description: item.description ?? '',
   category: item.category || item.album || 'General',
   uploadDate: item.uploadDate || item.createdAt || new Date().toISOString(),
 });
@@ -381,7 +382,7 @@ export default function GalleryManager() {
                     </div>
                     <div>
                       <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                        Description
+                        Description <span className="font-normal text-gray-500">(optional)</span>
                       </label>
                       <textarea
                         name="description"
@@ -389,8 +390,8 @@ export default function GalleryManager() {
                         value={formData.description}
                         onChange={handleInputChange}
                         rows={3}
+                        placeholder="Optional details shown in the gallery lightbox"
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                        required
                       ></textarea>
                     </div>
                     <div>

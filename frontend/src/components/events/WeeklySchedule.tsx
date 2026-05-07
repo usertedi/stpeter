@@ -88,12 +88,6 @@ export default function WeeklySchedule() {
             </motion.div>
           ))}
         </div>
-
-        <div className="mt-12 p-6 bg-secondary-50 rounded-lg">
-          <p className="text-center text-secondary-600">
-            <span className="font-medium">Note:</span> Schedule may change during major feast days and holidays. Please check our announcements for the most up-to-date information.
-          </p>
-        </div>
       </div>
     </section>
   )

@@ -9,7 +9,7 @@ const DivisionSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: [true, 'Please add a description'],
+    default: '',
     maxlength: [1000, 'Description cannot be more than 1000 characters']
   },
   icon: {

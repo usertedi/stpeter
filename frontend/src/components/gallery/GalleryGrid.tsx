@@ -29,10 +29,10 @@ const fallbackImages = [
   },
   {
     _id: '3',
-    title: 'Youth Group Meeting',
-    album: 'youth',
+    title: 'Community Gathering',
+    album: 'community',
     imageUrl: '/images/gallery/youth-1.jpg',
-    description: 'Weekly youth group gathering',
+    description: 'Fellowship and community activities',
     cloudinaryId: '',
     featured: false,
     createdAt: new Date().toISOString(),

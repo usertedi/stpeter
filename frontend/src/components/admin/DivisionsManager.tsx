@@ -3,36 +3,41 @@
 import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { apiFetch, getApiErrorMessage } from '@/lib/api';
+import {
+  DEFAULT_DIVISION_THEME,
+  DIVISION_THEME_OPTIONS,
+  normalizeDivisionThemeId,
+} from '@/lib/divisionDisplay';
 
-// Mock data for divisions
+// Mock data for divisions (icon/color slugs match the public site)
 const initialDivisions = [
   {
     _id: '1',
     title: 'Worship & Prayer',
     description: 'Join us for Divine Liturgy, prayer services, and spiritual guidance.',
-    icon: 'FaPrayingHands',
-    color: 'bg-primary-100 text-primary-700',
+    icon: 'worship',
+    color: 'worship',
   },
   {
     _id: '2',
     title: 'Community Outreach',
     description: 'Serving our community through charity work and social programs.',
-    icon: 'FaHandsHelping',
-    color: 'bg-accent-100 text-accent-700',
+    icon: 'outreach',
+    color: 'outreach',
   },
   {
     _id: '3',
     title: 'Choir & Music',
     description: 'Experience the beauty of Orthodox hymns and musical traditions.',
-    icon: 'FaMusic',
-    color: 'bg-secondary-100 text-secondary-700',
+    icon: 'music',
+    color: 'music',
   },
   {
     _id: '4',
     title: 'Education',
     description: 'Learn about Orthodox faith through classes, study groups, and resources.',
-    icon: 'FaBook',
-    color: 'bg-primary-100 text-primary-700',
+    icon: 'education',
+    color: 'education',
   },
 ];
 
@@ -60,8 +65,8 @@ export default function DivisionsManager() {
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
-    icon: '',
-    color: '',
+    icon: DEFAULT_DIVISION_THEME,
+    color: DEFAULT_DIVISION_THEME,
   });
 
   useEffect(() => {
@@ -105,16 +110,16 @@ export default function DivisionsManager() {
       setFormData({
         title: division.title,
         description: division.description,
-        icon: division.icon,
-        color: division.color,
+        icon: normalizeDivisionThemeId(division.icon),
+        color: normalizeDivisionThemeId(division.color),
       });
     } else {
       setCurrentDivision(null);
       setFormData({
         title: '',
         description: '',
-        icon: '',
-        color: '',
+        icon: DEFAULT_DIVISION_THEME,
+        color: DEFAULT_DIVISION_THEME,
       });
     }
     setIsModalOpen(true);
@@ -269,7 +274,10 @@ export default function DivisionsManager() {
                     <div className="text-sm text-gray-500 truncate max-w-xs">{division.description}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{division.icon}</div>
+                    <div className="text-sm text-gray-500">
+                      {DIVISION_THEME_OPTIONS.find((o) => o.value === normalizeDivisionThemeId(division.icon))
+                        ?.label ?? normalizeDivisionThemeId(division.icon)}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
@@ -324,7 +332,7 @@ export default function DivisionsManager() {
                     </div>
                     <div>
                       <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                        Description
+                        Description <span className="font-normal text-gray-500">(optional)</span>
                       </label>
                       <textarea
                         name="description"
@@ -332,37 +340,53 @@ export default function DivisionsManager() {
                         value={formData.description}
                         onChange={handleInputChange}
                         rows={3}
+                        placeholder="Optional blurb for this division"
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                        required
                       ></textarea>
                     </div>
                     <div>
                       <label htmlFor="icon" className="block text-sm font-medium text-gray-700">
                         Icon
                       </label>
-                      <input
-                        type="text"
+                      <select
                         name="icon"
                         id="icon"
                         value={formData.icon}
                         onChange={handleInputChange}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                         required
-                      />
+                      >
+                        {DIVISION_THEME_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Card icon on the homepage and divisions page.
+                      </p>
                     </div>
                     <div>
                       <label htmlFor="color" className="block text-sm font-medium text-gray-700">
-                        Color
+                        Card color
                       </label>
-                      <input
-                        type="text"
+                      <select
                         name="color"
                         id="color"
                         value={formData.color}
                         onChange={handleInputChange}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                         required
-                      />
+                      >
+                        {DIVISION_THEME_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Background tint on division cards (you can mix icon and color independently).
+                      </p>
                     </div>
                   </div>
                 </div>

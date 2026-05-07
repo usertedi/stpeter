@@ -2,21 +2,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useDivisions } from '@/hooks/useDivisions'
-import { FaPrayingHands, FaHandsHelping, FaMusic, FaBook, FaUsers, FaCoffee, FaMoneyBillWave, FaBullhorn, FaTools } from 'react-icons/fa'
-
-// Icon mapping for divisions (same approach as FeaturedDivisions)
-const iconMap: { [key: string]: any } = {
-  'worship': FaPrayingHands,
-  'outreach': FaHandsHelping,
-  'music': FaMusic,
-  'education': FaBook,
-  'youth': FaUsers,
-  'hospitality': FaCoffee,
-  'finance': FaMoneyBillWave,
-  'media': FaBullhorn,
-  'facilities': FaTools,
-  'default': FaPrayingHands,
-};
+import { divisionColorClassMap, divisionIconMap } from '@/lib/divisionDisplay'
 
 /** Row1: blue, pink, slate — Row2: blue, slate, pink. Backgrounds: sky/pink/slate-100 to match ref pastels (~#E1F5FE, #FCE4EC, #F0F4F8). */
 const cardHeaderPalette = [
@@ -164,8 +150,9 @@ export default function DivisionsList() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {cards.map((division: any, index: number) => {
-            const IconComponent = iconMap[division.icon] || iconMap['default'];
+            const IconComponent = divisionIconMap[division.icon] || divisionIconMap.worship;
             const colorClass =
+              divisionColorClassMap[division.color] ||
               cardHeaderPalette[index % cardHeaderPalette.length]
             return (
               <motion.div 

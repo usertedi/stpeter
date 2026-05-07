@@ -1,24 +1,21 @@
-"use client";
-import { motion } from 'framer-motion'
+'use client';
+
+import { motion } from 'framer-motion';
 
 export default function GalleryHero() {
   return (
-    <div className="relative bg-secondary-900 text-white overflow-hidden">
-      <div className="container-custom relative z-10 py-16 md:py-24">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-3xl mx-auto text-center"
-        >
-          <h1 className="text-4xl md:text-5xl font-serif font-bold mb-6">
-            Our Gallery
-          </h1>
-          <p className="text-lg md:text-xl text-secondary-100 mb-4">
-            ፎቶዎች
-          </p>
-        </motion.div>
-      </div>
-    </div>
-  )
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-3xl mx-auto text-center"
+    >
+      <h1 className="text-3xl md:text-4xl font-serif font-bold tracking-tight text-white">
+        Our Gallery
+      </h1>
+      <p className="mt-2 text-secondary-100 text-base md:text-lg">
+        ፎቶዎች
+      </p>
+    </motion.div>
+  );
 }

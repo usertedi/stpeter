@@ -43,6 +43,10 @@ export const metadata: Metadata = {
   keywords: [...siteConfig.keywords],
   alternates: {
     canonical: '/',
+    languages: {
+      'am-ET': '/',
+      'x-default': '/',
+    },
   },
   referrer: 'origin-when-cross-origin',
   robots: {
@@ -62,7 +66,6 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: siteConfig.openGraphSiteName,
     locale: 'am_ET',
-    alternateLocale: ['en_US'],
     type: 'website',
     images: [ogImage],
   },
@@ -76,7 +79,8 @@ export const metadata: Metadata = {
     google: 'FoZthXo7Ex0BI6HwrGtThORGxZplYlCvCPXKIsDwgws',
   },
   other: {
-    'content-language': 'am, en',
+    /** Google / Chrome translation opt-out (with `translate="no"` + `notranslate` on `<html>`). */
+    google: 'notranslate',
   },
 }
 
@@ -86,8 +90,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="am" className={`${inter.variable} ${merriweather.variable}`}>
-      <body className="min-h-screen flex flex-col">
+    <html
+      lang="am-ET"
+      translate="no"
+      className={`notranslate ${inter.variable} ${merriweather.variable}`}
+    >
+      <head>
+        {/* Spec form; `metadata.other` only emits `name=` metas which is not Content-Language. */}
+        <meta httpEquiv="Content-Language" content="am-ET" />
+      </head>
+      <body className="min-h-screen flex flex-col notranslate">
         <SiteJsonLd />
         <Header />
         <main className="flex-grow">{children}</main>

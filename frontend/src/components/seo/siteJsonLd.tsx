@@ -19,7 +19,7 @@ export default function SiteJsonLd() {
     url: siteUrl,
     description: siteConfig.defaultDescription,
     sameAs: siteConfig.sameAs,
-    inLanguage: ['am', 'en'],
+    inLanguage: ['am-ET', 'am'],
     areaServed: ['Addis Ababa', 'Ethiopia', 'CHS Sefere Selam'],
     address: {
       '@type': 'PostalAddress',
@@ -37,11 +37,16 @@ export default function SiteJsonLd() {
     '@id': websiteId,
     url: siteUrl,
     name: siteConfig.openGraphSiteName,
-    alternateName: [siteConfig.name, siteConfig.nameEnglish, siteConfig.domain],
+    alternateName: [
+      siteConfig.name,
+      siteConfig.nameEnglish,
+      'Kidus Petros',
+      'Qidus Petros Gibi Gubae',
+    ],
     description: siteConfig.defaultDescription,
     keywords: siteConfig.keywords.join(', '),
     publisher: { '@id': orgId },
-    inLanguage: ['am', 'en'],
+    inLanguage: ['am-ET', 'am'],
   }
 
   return <JsonLd data={[organization, website]} />

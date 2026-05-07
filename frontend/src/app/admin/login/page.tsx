@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
@@ -12,7 +11,6 @@ export default function AdminLogin() {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,11 +37,8 @@ export default function AdminLogin() {
         const isProduction = window.location.protocol === 'https:';
         document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}${isProduction ? '; secure' : ''}; samesite=strict`;
 
-        // Use replace instead of push to prevent back button issues
-        // Add a small delay to ensure cookie is set
-        setTimeout(() => {
-          router.replace('/admin');
-        }, 100);
+        // Full navigation so the next request reliably includes the new cookie for middleware.
+        window.location.assign('/admin');
       } else {
         setError(data.error || 'Invalid email or password');
       }

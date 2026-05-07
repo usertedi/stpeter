@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useDivisions } from '@/hooks/useDivisions'
-import { divisionColorClassMap, divisionIconMap } from '@/lib/divisionDisplay'
+import { divisionIconMap, normalizeDivisionThemeId } from '@/lib/divisionDisplay'
 
 /** Row1: blue, pink, slate — Row2: blue, slate, pink. Backgrounds: sky/pink/slate-100 to match ref pastels (~#E1F5FE, #FCE4EC, #F0F4F8). */
 const cardHeaderPalette = [
@@ -150,10 +150,9 @@ export default function DivisionsList() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {cards.map((division: any, index: number) => {
-            const IconComponent = divisionIconMap[division.icon] || divisionIconMap.worship;
-            const colorClass =
-              divisionColorClassMap[division.color] ||
-              cardHeaderPalette[index % cardHeaderPalette.length]
+            const iconSlug = normalizeDivisionThemeId(division.icon);
+            const IconComponent = divisionIconMap[iconSlug] ?? divisionIconMap.worship;
+            const colorClass = cardHeaderPalette[index % cardHeaderPalette.length];
             return (
               <motion.div 
                 key={division._id}

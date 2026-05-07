@@ -2,7 +2,11 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useDivisions } from '@/hooks/useDivisions'
-import { divisionColorClassMap, divisionIconMap } from '@/lib/divisionDisplay'
+import {
+  divisionColorClassMap,
+  divisionIconMap,
+  normalizeDivisionThemeId,
+} from '@/lib/divisionDisplay'
 
 // Fallback data in case API fails
 const fallbackDivisions = [
@@ -103,8 +107,11 @@ export default function FeaturedDivisions() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {featuredDivisions.map((division) => {
-            const IconComponent = divisionIconMap[division.icon] || divisionIconMap['worship'];
-            const colorClass = divisionColorClassMap[division.color] || divisionColorClassMap.default;
+            const iconSlug = normalizeDivisionThemeId(division.icon);
+            const colorSlug = normalizeDivisionThemeId(division.color);
+            const IconComponent = divisionIconMap[iconSlug] ?? divisionIconMap.worship;
+            const colorClass =
+              divisionColorClassMap[colorSlug] ?? divisionColorClassMap.default;
 
             return (
               <motion.div

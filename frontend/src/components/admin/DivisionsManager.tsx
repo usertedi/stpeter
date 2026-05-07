@@ -363,7 +363,7 @@ export default function DivisionsManager() {
                         ))}
                       </select>
                       <p className="mt-1 text-xs text-gray-500">
-                        Card icon on the homepage and divisions page.
+                        Shown on the homepage grid and divisions page cards.
                       </p>
                     </div>
                     <div>
@@ -385,7 +385,8 @@ export default function DivisionsManager() {
                         ))}
                       </select>
                       <p className="mt-1 text-xs text-gray-500">
-                        Background tint on division cards (you can mix icon and color independently).
+                        Header tint on the homepage “Our Divisions” cards. The full divisions page uses a
+                        fixed pastel rotation for readability; icon choice still applies there.
                       </p>
                     </div>
                   </div>

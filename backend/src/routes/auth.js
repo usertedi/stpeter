@@ -11,7 +11,9 @@ const {
   resetPassword,
   getUsers,
   getUser,
+  createUser,
   updateUser,
+  setUserPassword,
   deleteUser
 } = require('../controllers/auth');
 
@@ -28,8 +30,10 @@ router.put('/updatepassword', protect, updatePassword);
 
 // Admin routes
 router.get('/users', protect, admin, getUsers);
+router.post('/users', protect, admin, createUser);
 router.get('/users/:id', protect, admin, getUser);
 router.put('/users/:id', protect, admin, updateUser);
+router.put('/users/:id/password', protect, admin, setUserPassword);
 router.delete('/users/:id', protect, admin, deleteUser);
 
 module.exports = router;

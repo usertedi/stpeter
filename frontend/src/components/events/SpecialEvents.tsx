@@ -1,6 +1,7 @@
 "use client";
 import { motion } from 'framer-motion'
 import { useEvents } from '@/hooks/useEvents'
+import { formatEventDate } from '@/lib/dates'
 
 // Fallback data in case API fails
 const fallbackSpecialEvents = [
@@ -67,7 +68,7 @@ export default function SpecialEvents() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
                   <h3 className="text-2xl font-bold text-primary-700">{event.title}</h3>
                   <div className="mt-2 md:mt-0 px-4 py-1 bg-accent-100 text-accent-700 rounded-full font-medium text-sm">
-                    {event.date}
+                    {formatEventDate(event.date)}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

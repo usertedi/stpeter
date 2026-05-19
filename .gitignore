@@ -18,3 +18,6 @@ frontend/.vercel/
 
 # OS
 .DS_Store
+
+# TypeScript
+frontend/tsconfig.tsbuildinfo

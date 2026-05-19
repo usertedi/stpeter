@@ -4,7 +4,21 @@ const crypto = require('crypto');
 const { getPagination, getPaginationMeta } = require('../utils/pagination');
 const sendEmail = require('../utils/email');
 
-const userListFields = 'name email isAdmin createdAt';
+const userListFields = 'name email isAdmin role lastLoginAt createdAt';
+
+const resolveRole = (user) => {
+  if (user.role) return user.role;
+  return user.isAdmin ? 'admin' : 'editor';
+};
+
+const formatUser = (user) => {
+  const doc = user.toObject ? user.toObject() : user;
+  return {
+    ...doc,
+    id: doc._id?.toString() || doc.id,
+    role: resolveRole(doc),
+  };
+};
 
 /**
  * @desc    Register user
@@ -77,6 +91,9 @@ exports.login = async (req, res) => {
         error: 'Invalid credentials'
       });
     }
+
+    user.lastLoginAt = new Date();
+    await user.save({ validateBeforeSave: false });
 
     sendTokenResponse(user, 200, res);
   } catch (error) {
@@ -295,7 +312,7 @@ exports.getUsers = async (req, res) => {
       success: true,
       count: users.length,
       pagination: getPaginationMeta({ ...pagination, total }),
-      data: users
+      data: users.map(formatUser)
     });
   } catch (error) {
     res.status(500).json({
@@ -323,7 +340,66 @@ exports.getUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: user
+      data: formatUser(user)
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+/**
+ * @desc    Create user (admin)
+ * @route   POST /api/auth/users
+ * @access  Private/Admin
+ */
+exports.createUser = async (req, res) => {
+  try {
+    const { name, email, password, role = 'editor' } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Name, email, and password are required'
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        error: 'Password must be at least 6 characters'
+      });
+    }
+
+    const allowedRoles = ['admin', 'editor', 'viewer'];
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid role'
+      });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        error: 'User with this email already exists'
+      });
+    }
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role,
+      isAdmin: role === 'admin',
+    });
+
+    res.status(201).json({
+      success: true,
+      data: formatUser(user)
     });
   } catch (error) {
     res.status(500).json({
@@ -341,11 +417,26 @@ exports.getUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const fieldsToUpdate = {};
-    ['name', 'email', 'isAdmin'].forEach((field) => {
+    ['name', 'email'].forEach((field) => {
       if (Object.prototype.hasOwnProperty.call(req.body, field)) {
         fieldsToUpdate[field] = req.body[field];
       }
     });
+
+    if (Object.prototype.hasOwnProperty.call(req.body, 'role')) {
+      const allowedRoles = ['admin', 'editor', 'viewer'];
+      if (!allowedRoles.includes(req.body.role)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid role'
+        });
+      }
+      fieldsToUpdate.role = req.body.role;
+      fieldsToUpdate.isAdmin = req.body.role === 'admin';
+    } else if (Object.prototype.hasOwnProperty.call(req.body, 'isAdmin')) {
+      fieldsToUpdate.isAdmin = req.body.isAdmin;
+      fieldsToUpdate.role = req.body.isAdmin ? 'admin' : 'editor';
+    }
 
     const user = await User.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
       new: true,
@@ -361,7 +452,47 @@ exports.updateUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: user
+      data: formatUser(user)
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+/**
+ * @desc    Set user password (admin)
+ * @route   PUT /api/auth/users/:id/password
+ * @access  Private/Admin
+ */
+exports.setUserPassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        error: 'Password must be at least 6 characters'
+      });
+    }
+
+    const user = await User.findById(req.params.id).select('+password');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    user.password = password;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      data: 'Password updated'
     });
   } catch (error) {
     res.status(500).json({

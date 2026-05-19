@@ -28,12 +28,28 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  role: {
+    type: String,
+    enum: ['admin', 'editor', 'viewer'],
+    default: 'editor'
+  },
+  lastLoginAt: {
+    type: Date
+  },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
   createdAt: {
     type: Date,
     default: Date.now
   }
+});
+
+// Keep isAdmin in sync with role
+UserSchema.pre('save', function(next) {
+  if (this.isModified('role')) {
+    this.isAdmin = this.role === 'admin';
+  }
+  next();
 });
 
 // Encrypt password using bcrypt

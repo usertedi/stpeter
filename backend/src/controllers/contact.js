@@ -187,6 +187,9 @@ exports.deleteContactSubmission = async (req, res) => {
 /**
  * Helper function to send email notification
  */
+const getContactNotificationEmail = () =>
+  process.env.CONTACT_NOTIFICATION_EMAIL || 'yosefabay03@gmail.com';
+
 const sendEmailNotification = async (contact) => {
   try {
     if (!isEmailConfigured()) {
@@ -195,7 +198,8 @@ const sendEmailNotification = async (contact) => {
     }
 
     await sendEmail({
-      to: process.env.EMAIL_FROM,
+      to: getContactNotificationEmail(),
+      replyTo: contact.email,
       subject: `New Contact Form Submission: ${contact.subject}`,
       text: [
         'New Contact Form Submission',

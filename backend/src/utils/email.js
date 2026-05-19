@@ -28,6 +28,7 @@ const sendViaResend = async (options) => {
     body: JSON.stringify({
       from: process.env.EMAIL_FROM,
       to: [options.to],
+      ...(options.replyTo ? { reply_to: options.replyTo } : {}),
       subject: options.subject,
       html: options.html,
       text: options.text || stripHtml(options.html),
@@ -57,6 +58,7 @@ const sendViaSmtp = async (options) => {
   return transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: options.to,
+    ...(options.replyTo ? { replyTo: options.replyTo } : {}),
     subject: options.subject,
     html: options.html,
     text: options.text || stripHtml(options.html),

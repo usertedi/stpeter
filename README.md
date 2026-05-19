@@ -93,6 +93,21 @@ The backend exposes:
 - Configure Cloudinary and email credentials before enabling gallery uploads/contact notifications.
 - Run CI, frontend build, and backend tests before deploy.
 
+## Email
+
+**Contact form (app):** Submissions are saved to the admin **Messages** list and a copy is emailed to `CONTACT_NOTIFICATION_EMAIL` (default `yosefabay03@gmail.com`). Set `EMAIL_FROM` to `Kidus Petros <contact@kiduspetros.com>` in Resend after verifying `kiduspetros.com`.
+
+**Inbound mail to contact@kiduspetros.com:** Use **Namecheap Email Forwarding** (domain on Namecheap, site on Vercel). If forwarding stopped after Resend, set **Advanced DNS → Mail Settings → Email Forwarding** again and keep Resend **Inbound** off on the root domain. See [docs/email-namecheap-resend.md](docs/email-namecheap-resend.md).
+
+Render env vars:
+
+| Variable | Example |
+|----------|---------|
+| `RESEND_API_KEY` | from Resend dashboard |
+| `EMAIL_FROM` | `Kidus Petros <contact@kiduspetros.com>` |
+| `CONTACT_NOTIFICATION_EMAIL` | `yosefabay03@gmail.com` |
+| `FRONTEND_URL` | `https://kiduspetros.com` |
+
 ## Project Structure
 
 ```text

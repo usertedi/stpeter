@@ -27,7 +27,7 @@ export default function AdminSidebar({ currentView, setCurrentView }: AdminSideb
     { id: 'gallery', name: 'Gallery', icon: PhotoIcon },
     { id: 'divisions', name: 'Divisions', icon: UserGroupIcon },
     { id: 'contacts', name: 'Messages', icon: EnvelopeIcon },
-    { id: 'users', name: 'Users', icon: UsersIcon },
+    { id: 'users', name: 'Admins', icon: UsersIcon },
   ];
 
   const toggleMobileMenu = () => {

@@ -31,7 +31,7 @@ const UserSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['admin', 'editor', 'viewer'],
-    default: 'editor'
+    default: 'admin'
   },
   lastLoginAt: {
     type: Date

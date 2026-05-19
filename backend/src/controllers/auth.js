@@ -7,8 +7,8 @@ const sendEmail = require('../utils/email');
 const userListFields = 'name email isAdmin role lastLoginAt createdAt';
 
 const resolveRole = (user) => {
-  if (user.role) return user.role;
-  return user.isAdmin ? 'admin' : 'editor';
+  if (user.role === 'admin' || user.isAdmin) return 'admin';
+  return user.role || 'admin';
 };
 
 const formatUser = (user) => {
@@ -357,7 +357,7 @@ exports.getUser = async (req, res) => {
  */
 exports.createUser = async (req, res) => {
   try {
-    const { name, email, password, role = 'editor' } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -373,14 +373,6 @@ exports.createUser = async (req, res) => {
       });
     }
 
-    const allowedRoles = ['admin', 'editor', 'viewer'];
-    if (!allowedRoles.includes(role)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid role'
-      });
-    }
-
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -393,8 +385,8 @@ exports.createUser = async (req, res) => {
       name,
       email,
       password,
-      role,
-      isAdmin: role === 'admin',
+      role: 'admin',
+      isAdmin: true,
     });
 
     res.status(201).json({
@@ -422,21 +414,6 @@ exports.updateUser = async (req, res) => {
         fieldsToUpdate[field] = req.body[field];
       }
     });
-
-    if (Object.prototype.hasOwnProperty.call(req.body, 'role')) {
-      const allowedRoles = ['admin', 'editor', 'viewer'];
-      if (!allowedRoles.includes(req.body.role)) {
-        return res.status(400).json({
-          success: false,
-          error: 'Invalid role'
-        });
-      }
-      fieldsToUpdate.role = req.body.role;
-      fieldsToUpdate.isAdmin = req.body.role === 'admin';
-    } else if (Object.prototype.hasOwnProperty.call(req.body, 'isAdmin')) {
-      fieldsToUpdate.isAdmin = req.body.isAdmin;
-      fieldsToUpdate.role = req.body.isAdmin ? 'admin' : 'editor';
-    }
 
     const user = await User.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
       new: true,

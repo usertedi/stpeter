@@ -5,16 +5,11 @@ import { PlusIcon, PencilIcon, TrashIcon, LockClosedIcon } from '@heroicons/reac
 import { apiFetch, getApiErrorMessage } from '@/lib/api';
 import { formatDateTime } from '@/lib/dates';
 
-const roles = ['admin', 'editor', 'viewer'] as const;
-
-type UserRole = (typeof roles)[number];
-
 type User = {
   id: string;
   _id?: string;
   name: string;
   email: string;
-  role: UserRole;
   lastLoginAt?: string | null;
   createdAt: string;
 };
@@ -22,7 +17,6 @@ type User = {
 type FormData = {
   name: string;
   email: string;
-  role: UserRole;
   password: string;
   confirmPassword: string;
 };
@@ -33,7 +27,6 @@ const mapApiUser = (raw: Record<string, unknown>): User => ({
   id: String(raw.id || raw._id || ''),
   name: String(raw.name || ''),
   email: String(raw.email || ''),
-  role: (raw.role as UserRole) || (raw.isAdmin ? 'admin' : 'editor'),
   lastLoginAt: (raw.lastLoginAt as string | null) ?? null,
   createdAt: String(raw.createdAt || ''),
 });
@@ -48,7 +41,6 @@ export default function UsersManager() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
-    role: 'editor',
     password: '',
     confirmPassword: '',
   });
@@ -103,7 +95,6 @@ export default function UsersManager() {
       setFormData({
         name: user.name,
         email: user.email,
-        role: user.role,
         password: '',
         confirmPassword: '',
       });
@@ -112,7 +103,6 @@ export default function UsersManager() {
       setFormData({
         name: '',
         email: '',
-        role: 'editor',
         password: '',
         confirmPassword: '',
       });
@@ -139,7 +129,7 @@ export default function UsersManager() {
     setIsPasswordModalOpen(false);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -170,7 +160,6 @@ export default function UsersManager() {
           body: JSON.stringify({
             name: formData.name,
             email: formData.email,
-            role: formData.role,
           }),
         });
 
@@ -187,7 +176,6 @@ export default function UsersManager() {
           body: JSON.stringify({
             name: formData.name,
             email: formData.email,
-            role: formData.role,
             password: formData.password,
           }),
         });
@@ -274,13 +262,13 @@ export default function UsersManager() {
   return (
     <div>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-2xl font-bold text-gray-800">Manage Users</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Manage Admins</h2>
         <button
           onClick={() => handleOpenModal()}
           className="flex w-full items-center justify-center rounded-md bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:w-auto"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
-          Add User
+          Add Admin
         </button>
       </div>
 
@@ -297,12 +285,11 @@ export default function UsersManager() {
       ) : (
         <div className="overflow-hidden rounded-lg bg-white shadow-md">
           <div className="overflow-x-auto">
-          <table className="min-w-[980px] divide-y divide-gray-200">
+          <table className="min-w-[800px] divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -316,11 +303,6 @@ export default function UsersManager() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">{user.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : user.role === 'editor' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
-                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">{formatDateTime(user.lastLoginAt)}</div>
@@ -357,7 +339,7 @@ export default function UsersManager() {
               <form onSubmit={handleSubmit}>
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <h3 className="text-lg font-medium text-gray-900 mb-4">
-                    {currentUser ? 'Edit User' : 'Add New User'}
+                    {currentUser ? 'Edit Admin' : 'Add New Admin'}
                   </h3>
                   <div className="space-y-4">
                     <div>
@@ -367,14 +349,6 @@ export default function UsersManager() {
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                       <input type="email" name="email" id="email" value={formData.email} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500" required />
-                    </div>
-                    <div>
-                      <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
-                      <select name="role" id="role" value={formData.role} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500" required>
-                        {roles.map((role) => (
-                          <option key={role} value={role}>{role.charAt(0).toUpperCase() + role.slice(1)}</option>
-                        ))}
-                      </select>
                     </div>
                     {!currentUser && (
                       <>

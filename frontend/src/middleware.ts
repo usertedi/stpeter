@@ -7,7 +7,10 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Define paths that are considered public (no auth required)
-  const isPublicPath = path === '/admin/login';
+  const isPublicPath =
+    path === '/admin/login' ||
+    path === '/admin/forgot-password' ||
+    path.startsWith('/admin/reset-password/');
 
   // Get the JWT token from the cookies
   const token = request.cookies.get('token')?.value || '';

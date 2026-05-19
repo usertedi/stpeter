@@ -1,5 +1,6 @@
 const Contact = require('../models/Contact');
-const nodemailer = require('nodemailer');
+const sendEmail = require('../utils/email');
+const isEmailConfigured = sendEmail.isEmailConfigured;
 const { getPagination, getPaginationMeta } = require('../utils/pagination');
 
 const contactListFields = 'name email phone subject message status createdAt';
@@ -188,24 +189,13 @@ exports.deleteContactSubmission = async (req, res) => {
  */
 const sendEmailNotification = async (contact) => {
   try {
-    if (!process.env.EMAIL_SERVICE || !process.env.EMAIL_USERNAME || !process.env.EMAIL_PASSWORD || !process.env.EMAIL_FROM) {
+    if (!isEmailConfigured()) {
       console.warn('Email notification skipped: email environment variables are not configured');
       return false;
     }
 
-    // Create transporter
-    const transporter = nodemailer.createTransport({
-      service: process.env.EMAIL_SERVICE,
-      auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
-
-    // Email content
-    const mailOptions = {
-      from: process.env.EMAIL_FROM,
-      to: process.env.EMAIL_FROM, // Send to church email
+    await sendEmail({
+      to: process.env.EMAIL_FROM,
       subject: `New Contact Form Submission: ${contact.subject}`,
       text: [
         'New Contact Form Submission',
@@ -224,11 +214,8 @@ const sendEmailNotification = async (contact) => {
         <p><strong>Subject:</strong> ${escapeHtml(contact.subject)}</p>
         <p><strong>Message:</strong></p>
         <p>${escapeHtml(contact.message).replace(/\n/g, '<br />')}</p>
-      `
-    };
-
-    // Send email
-    await transporter.sendMail(mailOptions);
+      `,
+    });
     return true;
   } catch (error) {
     console.error('Email notification error:', error);

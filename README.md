@@ -14,7 +14,7 @@ Official website and admin portal for Kidus Petros Gibi Gubae at https://kiduspe
 - npm
 - MongoDB Atlas or a local MongoDB instance
 - Cloudinary account for gallery uploads
-- SMTP/email credentials for contact notifications and password reset
+- Resend API key (recommended for production on Render) or SMTP credentials for local email testing
 
 ## Local Development
 

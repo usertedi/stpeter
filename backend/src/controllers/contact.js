@@ -45,12 +45,12 @@ exports.submitContactForm = async (req, res) => {
       message
     });
 
-    // Send email notification
-    const notificationSent = await sendEmailNotification(contact);
+    const notification = await sendEmailNotification(contact);
 
     res.status(201).json({
       success: true,
-      notificationSent,
+      notificationSent: notification.sent,
+      ...(notification.error ? { notificationError: notification.error } : {}),
       data: contact
     });
   } catch (error) {
@@ -187,14 +187,18 @@ exports.deleteContactSubmission = async (req, res) => {
 /**
  * Helper function to send email notification
  */
+const CONTACT_NOTIFY_EMAIL = 'yosefabay03@gmail.com';
+
 const getContactNotificationEmail = () =>
-  process.env.CONTACT_NOTIFICATION_EMAIL || 'yosefabay03@gmail.com';
+  process.env.CONTACT_NOTIFICATION_EMAIL || CONTACT_NOTIFY_EMAIL;
 
 const sendEmailNotification = async (contact) => {
   try {
     if (!isEmailConfigured()) {
-      console.warn('Email notification skipped: email environment variables are not configured');
-      return false;
+      console.error(
+        'Contact form email NOT sent: set RESEND_API_KEY and EMAIL_FROM on the server (Render env vars).'
+      );
+      return { sent: false, error: 'Email is not configured on the server' };
     }
 
     await sendEmail({
@@ -220,9 +224,11 @@ const sendEmailNotification = async (contact) => {
         <p>${escapeHtml(contact.message).replace(/\n/g, '<br />')}</p>
       `,
     });
-    return true;
+    console.log(`Contact form notification sent to ${getContactNotificationEmail()}`);
+    return { sent: true };
   } catch (error) {
-    console.error('Email notification error:', error);
-    return false;
+    const message = error instanceof Error ? error.message : 'Unknown email error';
+    console.error(`Contact form email NOT sent to ${getContactNotificationEmail()}:`, message);
+    return { sent: false, error: message };
   }
 };

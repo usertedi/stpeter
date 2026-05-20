@@ -94,6 +94,9 @@ const sendEmail = async (options) => {
     );
   } catch (error) {
     console.error('Email sending error:', error);
+    if (error instanceof Error && error.message !== 'Email could not be sent') {
+      throw error;
+    }
     throw new Error('Email could not be sent');
   }
 };

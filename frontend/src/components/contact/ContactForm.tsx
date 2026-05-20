@@ -37,8 +37,15 @@ export default function ContactForm() {
       if (!response.ok) {
         throw new Error(await getApiErrorMessage(response, 'Failed to send message'));
       }
-      
-      toast.success('Message received. We will get back to you soon.');
+
+      const result = await response.json();
+
+      if (result.notificationSent === false) {
+        toast.success('Message received. We will get back to you soon.');
+        console.warn('Contact notification email was not sent:', result.notificationError);
+      } else {
+        toast.success('Message received. We will get back to you soon.');
+      }
       reset();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to send message. Please try again.');

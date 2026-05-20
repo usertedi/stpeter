@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
+const { isEmailConfigured } = require('./utils/email');
 
 // Load environment variables
 dotenv.config();
@@ -89,7 +90,10 @@ app.get('/api/health', (req, res) => {
     success: true,
     status: 'ok',
     uptime: process.uptime(),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    emailConfigured: isEmailConfigured(),
+    contactNotificationsTo:
+      process.env.CONTACT_NOTIFICATION_EMAIL || 'yosefabay03@gmail.com',
   });
 });
 
@@ -113,6 +117,18 @@ const PORT = process.env.PORT || 5000;
 // Start server
 const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+
+  if (isEmailConfigured()) {
+    console.log(
+      `Email: Resend/SMTP ready. Contact form → ${
+        process.env.CONTACT_NOTIFICATION_EMAIL || 'yosefabay03@gmail.com'
+      }`
+    );
+  } else {
+    console.warn(
+      'Email NOT configured: set RESEND_API_KEY + EMAIL_FROM on Render. Contact form will save to admin but not email.'
+    );
+  }
 });
 
 // Handle unhandled promise rejections

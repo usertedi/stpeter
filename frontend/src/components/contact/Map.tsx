@@ -1,14 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { siteConfig } from '@/lib/site';
-
-const mapQuery = encodeURIComponent([
-  siteConfig.nameLatin,
-  siteConfig.address.streetAddress,
-  siteConfig.address.addressLocality,
-  siteConfig.address.addressCountry,
-].join(', '));
+import { getGoogleMapsSearchUrl, siteConfig } from '@/lib/site';
 
 export default function Map() {
   return (
@@ -31,7 +24,7 @@ export default function Map() {
               {siteConfig.address.addressLocality}, {siteConfig.address.addressCountry}
             </address>
             <a
-              href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+              href={getGoogleMapsSearchUrl()}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-primary mt-6 inline-flex"

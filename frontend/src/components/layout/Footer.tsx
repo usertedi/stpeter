@@ -2,13 +2,17 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { FaEnvelope, FaTelegram, FaPhone, FaMapMarkerAlt } from 'react-icons/fa'
+import { FaEnvelope, FaTelegram, FaPhone, FaMapMarkerAlt, FaYoutube } from 'react-icons/fa'
 
-import { siteConfig } from '@/lib/site'
+import { formatSiteAddressLines, getGoogleMapsSearchUrl, siteConfig } from '@/lib/site'
+
+const youtubeChannelUrl = 'https://www.youtube.com/@ቅዱስጴጥሮስግቢጉባኤkidusp'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
   const pathname = usePathname()
+  const address = formatSiteAddressLines()
+  const mapsUrl = getGoogleMapsSearchUrl()
 
   if (pathname.startsWith('/admin')) {
     return null
@@ -59,7 +63,16 @@ export default function Footer() {
             <ul className="space-y-3 text-sm sm:text-base">
               <li className="flex items-start">
                 <FaMapMarkerAlt className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />
-                <span className="text-secondary-300">CHS Sefere Selam</span>
+                <a
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-secondary-300 transition-colors hover:text-white"
+                >
+                  {address.line1}
+                  <br />
+                  {address.line2}
+                </a>
               </li>
               <li className="flex items-start">
                 <FaPhone className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />
@@ -75,6 +88,12 @@ export default function Footer() {
                 <FaTelegram className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />
                 <a href="https://t.me/kidus_petros_mereja" target="_blank" rel="noopener noreferrer" className="break-words text-secondary-300 transition-colors hover:text-white">
                   t.me/kidus_petros_mereja
+                </a>
+              </li>
+              <li className="flex items-start">
+                <FaYoutube className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />
+                <a href={youtubeChannelUrl} target="_blank" rel="noopener noreferrer" className="break-words text-secondary-300 transition-colors hover:text-white">
+                  youtube.com/@ቅዱስጴጥሮስግቢጉባኤkidusp
                 </a>
               </li>
             </ul>

@@ -3,9 +3,11 @@
 import { motion } from 'framer-motion';
 import { ChatBubbleLeftRightIcon, EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
 
-import { siteConfig } from '@/lib/site';
+import { formatSiteAddressLines, getGoogleMapsSearchUrl, siteConfig } from '@/lib/site';
 
 export default function ContactInfo() {
+  const address = formatSiteAddressLines();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -20,7 +22,16 @@ export default function ContactInfo() {
           <MapPinIcon className="h-6 w-6 text-primary-600 flex-shrink-0 mt-1" />
           <div className="ml-4">
             <h3 className="font-bold text-gray-800">Address</h3>
-            <p className="text-gray-600">CHS<br />Sefere selam campus</p>
+            <a
+              href={getGoogleMapsSearchUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-600 transition-colors hover:text-primary-600 hover:underline"
+            >
+              {address.line1}
+              <br />
+              {address.line2}
+            </a>
           </div>
         </div>
         

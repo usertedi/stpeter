@@ -108,7 +108,7 @@ export const siteConfig = {
   sameAs: [
     'https://t.me/kidus_petros_mereja',
     'https://www.instagram.com/kidus_petros_gibi_gubae',
-    'https://youtube.com/channel/UCf9ULIkZg3Hlu_KryEOfrjg',
+    'https://youtube.com/@ቅዱስጴጥሮስግቢጉባኤkidusp',
   ],
   address: {
     streetAddress: 'CHS, Sefere Selam campus',
@@ -119,3 +119,21 @@ export const siteConfig = {
   telephone: ['+251946406302', '+251972547887'],
   email: 'contact@kiduspetros.com',
 } as const
+
+export const formatSiteAddressLines = () => ({
+  line1: siteConfig.address.streetAddress,
+  line2: `${siteConfig.address.addressLocality}, ${siteConfig.address.addressCountry}`,
+})
+
+export const getGoogleMapsSearchUrl = () => {
+  const mapQuery = encodeURIComponent(
+    [
+      siteConfig.nameLatin,
+      siteConfig.address.streetAddress,
+      siteConfig.address.addressLocality,
+      siteConfig.address.addressCountry,
+    ].join(', ')
+  )
+
+  return `https://www.google.com/maps/search/?api=1&query=${mapQuery}`
+}

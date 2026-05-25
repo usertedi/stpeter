@@ -99,10 +99,10 @@ export default function RootLayout({
         {/* Spec form; `metadata.other` only emits `name=` metas which is not Content-Language. */}
         <meta httpEquiv="Content-Language" content="am-ET" />
       </head>
-      <body className="min-h-screen flex flex-col notranslate">
+      <body className="notranslate flex min-h-screen min-w-0 flex-col overflow-x-hidden">
         <SiteJsonLd />
         <Header />
-        <main className="flex-grow">{children}</main>
+        <main className="min-w-0 flex-grow overflow-x-hidden">{children}</main>
         <Footer />
         <Toaster position="bottom-right" />
       </body>

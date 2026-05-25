@@ -19,7 +19,7 @@ export default function AdminHeader() {
         <div className="flex items-center justify-between h-16">
           <div className="flex min-w-0 flex-1 items-center justify-between">
             <div className="flex min-w-0 items-center">
-              <h1 className="truncate text-lg font-semibold text-gray-800 sm:text-xl md:text-2xl">Admin Dashboard</h1>
+              <h1 className="break-words text-lg font-semibold text-gray-800 sm:text-xl md:text-2xl">Admin Dashboard</h1>
             </div>
             <div className="ml-4 flex flex-shrink-0 items-center">
               <button

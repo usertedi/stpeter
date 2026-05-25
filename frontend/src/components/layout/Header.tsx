@@ -31,7 +31,7 @@ export default function Header() {
             <span className="sr-only">ቅዱስ ጴጥሮስ ጊቢ ጉባኤ</span>
             <div className="flex h-10 min-w-0 items-center">
               {/* Replace with your actual logo */}
-              <span className="max-w-[calc(100vw-5rem)] truncate font-serif text-lg font-bold text-primary-700 sm:max-w-none sm:text-xl">
+              <span className="break-words font-serif text-base font-bold leading-snug text-primary-700 sm:text-lg md:text-xl">
                 ቅዱስ ጴጥሮስ ጊቢ ጉባኤ
               </span>
             </div>
@@ -84,7 +84,7 @@ export default function Header() {
             <Link href="/" className="-m-1.5 p-1.5" onClick={() => setMobileMenuOpen(false)}>
               <span className="sr-only">ቅዱስ ጴጥሮስ ጊቢ ጉባኤ</span>
               <div className="flex h-8 min-w-0 items-center">
-                <span className="max-w-[calc(100vw-7rem)] truncate font-serif text-lg font-bold text-primary-700">
+                <span className="break-words font-serif text-base font-bold leading-snug text-primary-700">
                   ቅዱስ ጴጥሮስ ጊቢ ጉባኤ
                 </span>
               </div>

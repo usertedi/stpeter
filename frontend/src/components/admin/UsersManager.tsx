@@ -298,19 +298,19 @@ export default function UsersManager() {
             <tbody className="bg-white divide-y divide-gray-200">
               {users.map((user) => (
                 <tr key={getUserId(user)}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                  <td className="min-w-0 px-6 py-4">
+                    <div className="break-words text-sm font-medium text-gray-900">{user.name}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{user.email}</div>
+                  <td className="min-w-0 px-6 py-4">
+                    <div className="break-all text-sm text-gray-500">{user.email}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{formatDateTime(user.lastLoginAt)}</div>
+                  <td className="min-w-0 px-6 py-4">
+                    <div className="break-words text-sm text-gray-500">{formatDateTime(user.lastLoginAt)}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{formatDateTime(user.createdAt)}</div>
+                  <td className="min-w-0 px-6 py-4">
+                    <div className="break-words text-sm text-gray-500">{formatDateTime(user.createdAt)}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 text-right text-sm font-medium">
                     <button onClick={() => handleOpenPasswordModal(user)} className="text-gray-600 hover:text-gray-900 mr-4" title="Change Password">
                       <LockClosedIcon className="h-5 w-5" />
                     </button>

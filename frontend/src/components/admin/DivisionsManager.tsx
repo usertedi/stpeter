@@ -267,14 +267,14 @@ export default function DivisionsManager() {
             <tbody className="bg-white divide-y divide-gray-200">
               {divisions.map((division) => (
                 <tr key={division._id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{division.title}</div>
+                  <td className="min-w-0 px-6 py-4">
+                    <div className="break-words text-sm font-medium text-gray-900">{division.title}</div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-500 truncate max-w-xs">{division.description}</div>
+                  <td className="min-w-0 px-6 py-4">
+                    <div className="break-words text-sm text-gray-500">{division.description}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">
+                  <td className="min-w-0 px-6 py-4">
+                    <div className="break-words text-sm text-gray-500">
                       {DIVISION_THEME_OPTIONS.find((o) => o.value === normalizeDivisionThemeId(division.icon))
                         ?.label ?? normalizeDivisionThemeId(division.icon)}
                     </div>

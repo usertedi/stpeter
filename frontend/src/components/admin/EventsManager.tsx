@@ -290,18 +290,18 @@ export default function EventsManager() {
             <tbody className="bg-white divide-y divide-gray-200">
               {events.map((event) => (
                 <tr key={event._id}>
+                  <td className="min-w-0 px-6 py-4">
+                    <div className="break-words text-sm font-medium text-gray-900">{event.title}</div>
+                    <div className="break-words text-sm text-gray-500">{event.description}</div>
+                  </td>
+                  <td className="min-w-0 px-6 py-4">
+                    <div className="break-words text-sm text-gray-900">{formatDate(event.date)}</div>
+                    <div className="break-words text-sm text-gray-500">{event.time}</div>
+                  </td>
+                  <td className="min-w-0 px-6 py-4">
+                    <div className="break-words text-sm text-gray-500">{event.location}</div>
+                  </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">{event.title}</div>
-                    <div className="text-sm text-gray-500 truncate max-w-xs">{event.description}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{formatDate(event.date)}</div>
-                    <div className="text-sm text-gray-500">{event.time}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{event.location}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${event.featured ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
                       {event.featured ? 'Yes' : 'No'}
                     </span>

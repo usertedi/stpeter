@@ -20,13 +20,13 @@ export default function ContactInfo() {
       <div className="space-y-6">
         <div className="flex items-start">
           <MapPinIcon className="h-6 w-6 text-primary-600 flex-shrink-0 mt-1" />
-          <div className="ml-4">
+          <div className="ml-4 min-w-0 flex-1">
             <h3 className="font-bold text-gray-800">Address</h3>
             <a
               href={getGoogleMapsSearchUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 transition-colors hover:text-primary-600 hover:underline"
+              className="break-words text-gray-600 transition-colors hover:text-primary-600 hover:underline"
             >
               {address.line1}
               <br />
@@ -37,15 +37,15 @@ export default function ContactInfo() {
         
         <div className="flex items-start">
           <PhoneIcon className="h-6 w-6 text-primary-600 flex-shrink-0 mt-1" />
-          <div className="ml-4">
+          <div className="ml-4 min-w-0 flex-1">
             <h3 className="font-bold text-gray-800">Phone</h3>
-            <p className="text-gray-600">0946406302 or 0972547887</p>
+            <p className="break-words text-gray-600">0946406302 or 0972547887</p>
           </div>
         </div>
         
         <div className="flex items-start">
           <EnvelopeIcon className="h-6 w-6 text-primary-600 flex-shrink-0 mt-1" />
-          <div className="ml-4">
+          <div className="ml-4 min-w-0 flex-1">
             <h3 className="font-bold text-gray-800">Email</h3>
             <a
               href={`mailto:${siteConfig.email}`}
@@ -58,7 +58,7 @@ export default function ContactInfo() {
 
         <div className="flex items-start">
           <ChatBubbleLeftRightIcon className="h-6 w-6 text-primary-600 flex-shrink-0 mt-1" />
-          <div className="ml-4">
+          <div className="ml-4 min-w-0 flex-1">
             <h3 className="font-bold text-gray-800">Telegram</h3>
             <a
               href="https://t.me/kidus_petros_mereja"

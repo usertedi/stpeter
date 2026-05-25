@@ -8,6 +8,13 @@ import { formatSiteAddressLines, getGoogleMapsSearchUrl, siteConfig } from '@/li
 
 const youtubeChannelUrl = 'https://www.youtube.com/@ቅዱስጴጥሮስግቢጉባኤkidusp'
 
+type ContactIconLink = {
+  href: string
+  label: string
+  icon: typeof FaMapMarkerAlt
+  external?: boolean
+}
+
 export default function Footer() {
   const currentYear = new Date().getFullYear()
   const pathname = usePathname()
@@ -18,90 +25,113 @@ export default function Footer() {
     return null
   }
 
+  const contactLinks: ContactIconLink[] = [
+    {
+      href: mapsUrl,
+      label: `Open location in Google Maps: ${address.line1}, ${address.line2}`,
+      icon: FaMapMarkerAlt,
+      external: true,
+    },
+    {
+      href: `tel:${siteConfig.telephone[0]}`,
+      label: `Call ${siteConfig.telephone[0].replace('+251', '0')} or ${siteConfig.telephone[1].replace('+251', '0')}`,
+      icon: FaPhone,
+    },
+    {
+      href: `mailto:${siteConfig.email}`,
+      label: `Email ${siteConfig.email}`,
+      icon: FaEnvelope,
+    },
+    {
+      href: 'https://t.me/kidus_petros_mereja',
+      label: 'Open Telegram channel',
+      icon: FaTelegram,
+      external: true,
+    },
+    {
+      href: youtubeChannelUrl,
+      label: 'Open YouTube channel',
+      icon: FaYoutube,
+      external: true,
+    },
+  ]
+
+  const iconButtonClass =
+    'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-secondary-800 text-primary-500 transition-colors hover:bg-secondary-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500'
+
   return (
     <footer className="bg-secondary-900 text-white">
       <div className="container-custom py-8 sm:py-10">
-        <div className="grid grid-cols-2 gap-6 md:gap-8">
-          <div>
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:gap-10">
+          <div className="min-w-0">
             <h3 className="mb-4 font-serif text-lg font-bold sm:text-xl">Quick Links</h3>
             <ul className="space-y-2 text-sm sm:text-base">
               <li>
-                <Link href="/" className="text-secondary-300 hover:text-white transition-colors">
+                <Link href="/" className="text-secondary-300 transition-colors hover:text-white">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-secondary-300 hover:text-white transition-colors">
+                <Link href="/about" className="text-secondary-300 transition-colors hover:text-white">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/divisions" className="text-secondary-300 hover:text-white transition-colors">
+                <Link href="/divisions" className="text-secondary-300 transition-colors hover:text-white">
                   Our Divisions
                 </Link>
               </li>
               <li>
-                <Link href="/events" className="text-secondary-300 hover:text-white transition-colors">
+                <Link href="/events" className="text-secondary-300 transition-colors hover:text-white">
                   Weekly Events
                 </Link>
               </li>
               <li>
-                <Link href="/gallery" className="text-secondary-300 hover:text-white transition-colors">
+                <Link href="/gallery" className="text-secondary-300 transition-colors hover:text-white">
                   Gallery
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-secondary-300 hover:text-white transition-colors">
+                <Link href="/contact" className="text-secondary-300 transition-colors hover:text-white">
                   Contact Us
                 </Link>
               </li>
             </ul>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h3 className="mb-4 font-serif text-lg font-bold sm:text-xl">Contact Us</h3>
-            <ul className="space-y-3 text-sm sm:text-base">
-              <li className="flex items-start">
-                <FaMapMarkerAlt className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />
-                <a
-                  href={mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-secondary-300 transition-colors hover:text-white"
-                >
-                  {address.line1}
-                  <br />
-                  {address.line2}
-                </a>
-              </li>
-              <li className="flex items-start">
-                <FaPhone className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />
-                <span className="text-secondary-300">0946406302 or 0972547887</span>
-              </li>
-              <li className="flex items-start">
-                <FaEnvelope className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />
-                <a href={`mailto:${siteConfig.email}`} className="break-words text-secondary-300 transition-colors hover:text-white">
-                  {siteConfig.email}
-                </a>
-              </li>
-              <li className="flex items-start">
-                <FaTelegram className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />
-                <a href="https://t.me/kidus_petros_mereja" target="_blank" rel="noopener noreferrer" className="break-words text-secondary-300 transition-colors hover:text-white">
-                  t.me/kidus_petros_mereja
-                </a>
-              </li>
-              <li className="flex items-start">
-                <FaYoutube className="mt-1 mr-2 flex-shrink-0 text-primary-500 sm:mr-3" />
-                <a href={youtubeChannelUrl} target="_blank" rel="noopener noreferrer" className="break-words text-secondary-300 transition-colors hover:text-white">
-                  youtube.com/@ቅዱስጴጥሮስግቢጉባኤkidusp
-                </a>
-              </li>
-            </ul>
+            <div className="flex flex-wrap gap-3">
+              {contactLinks.map((link) => {
+                const Icon = link.icon
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    {...(link.external
+                      ? { target: '_blank', rel: 'noopener noreferrer' }
+                      : {})}
+                    className={iconButtonClass}
+                    aria-label={link.label}
+                    title={link.label}
+                  >
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </a>
+                )
+              })}
+            </div>
+            <p className="mt-4 break-words text-sm leading-relaxed text-secondary-400">
+              {address.line1}
+              <br />
+              {address.line2}
+            </p>
           </div>
         </div>
 
         <div className="mt-8 border-t border-secondary-800 pt-6 text-center text-sm text-secondary-400 sm:mt-10">
-          <p>&copy; {currentYear} ቅዱስ ጴጥሮስ ጊቢ ጉባኤ. All rights reserved.</p>
+          <p className="break-words px-2">
+            &copy; {currentYear} ቅዱስ ጴጥሮስ ጊቢ ጉባኤ. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

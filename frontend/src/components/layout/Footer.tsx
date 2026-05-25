@@ -16,9 +16,9 @@ type ContactIconLink = {
 const iconButtonClass =
   'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-secondary-800 text-primary-500 transition-colors hover:bg-secondary-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500'
 
-function IconLinkRow({ links, align = 'start' }: { links: ContactIconLink[]; align?: 'start' | 'end' }) {
+function IconLinkRow({ links }: { links: ContactIconLink[] }) {
   return (
-    <div className={`flex flex-wrap gap-2 sm:gap-3 ${align === 'end' ? 'justify-end' : ''}`}>
+    <div className="flex flex-wrap gap-3">
       {links.map((link) => {
         const Icon = link.icon
         return (
@@ -26,11 +26,11 @@ function IconLinkRow({ links, align = 'start' }: { links: ContactIconLink[]; ali
             key={link.label}
             href={link.href}
             {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-            className={`${iconButtonClass} h-10 w-10 sm:h-11 sm:w-11`}
+            className={iconButtonClass}
             aria-label={link.label}
             title={link.label}
           >
-            <Icon className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden />
+            <Icon className="h-5 w-5" aria-hidden />
           </a>
         )
       })}
@@ -87,8 +87,8 @@ export default function Footer() {
       <div className="container-custom py-8 sm:py-10">
         <div className="grid grid-cols-2 gap-4 sm:gap-8 md:gap-10">
           <div className="min-w-0">
-            <h3 className="mb-3 font-serif text-base font-bold sm:mb-4 sm:text-lg md:text-xl">Quick Links</h3>
-            <ul className="space-y-1.5 text-sm sm:space-y-2 sm:text-base">
+            <h3 className="mb-4 font-serif text-lg font-bold sm:text-xl">Quick Links</h3>
+            <ul className="space-y-2 text-sm sm:text-base">
               <li>
                 <Link href="/" className="text-secondary-300 transition-colors hover:text-white">
                   Home
@@ -123,13 +123,13 @@ export default function Footer() {
           </div>
 
           <div className="min-w-0 space-y-4 sm:space-y-6">
-            <div className="text-right">
-              <h3 className="mb-3 font-serif text-base font-bold sm:mb-4 sm:text-lg md:text-xl">Contact Us</h3>
-              <IconLinkRow links={contactLinks} align="end" />
+            <div>
+              <h3 className="mb-4 font-serif text-lg font-bold sm:text-xl">Contact Us</h3>
+              <IconLinkRow links={contactLinks} />
             </div>
-            <div className="text-right">
-              <h3 className="mb-3 font-serif text-base font-bold sm:mb-4 sm:text-lg md:text-xl">Follow Us</h3>
-              <IconLinkRow links={followLinks} align="end" />
+            <div>
+              <h3 className="mb-4 font-serif text-lg font-bold sm:text-xl">Follow Us</h3>
+              <IconLinkRow links={followLinks} />
             </div>
           </div>
         </div>

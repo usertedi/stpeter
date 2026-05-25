@@ -11,8 +11,10 @@ export default function Map() {
       transition={{ duration: 0.5, delay: 0.4 }}
       className="mt-12"
     >
-      <h2 className="heading-2 mb-6 text-center">Find Us</h2>
-      
+      <div className="heading-2 mb-6 text-center" aria-hidden="true">
+        <span className="invisible block">Find Us</span>
+      </div>
+
       <div className="rounded-lg overflow-hidden bg-gradient-to-br from-slate-50 via-white to-gray-100 min-h-[360px] relative border border-gray-100">
         <div className="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.95),transparent_25%),radial-gradient(circle_at_70%_40%,rgba(255,255,255,0.85),transparent_20%)]" />
         <div className="relative z-10 flex min-h-[360px] items-center justify-center p-6">

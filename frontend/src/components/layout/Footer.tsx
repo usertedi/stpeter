@@ -6,13 +6,36 @@ import { FaEnvelope, FaTelegram, FaPhone, FaMapMarkerAlt, FaYoutube } from 'reac
 
 import { formatSiteAddressLines, getGoogleMapsSearchUrl, siteConfig } from '@/lib/site'
 
-const youtubeChannelUrl = 'https://www.youtube.com/@ቅዱስጴጥሮስግቢጉባኤkidusp'
-
 type ContactIconLink = {
   href: string
   label: string
   icon: typeof FaMapMarkerAlt
   external?: boolean
+}
+
+const iconButtonClass =
+  'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-secondary-800 text-primary-500 transition-colors hover:bg-secondary-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500'
+
+function IconLinkRow({ links }: { links: ContactIconLink[] }) {
+  return (
+    <div className="flex flex-wrap gap-3">
+      {links.map((link) => {
+        const Icon = link.icon
+        return (
+          <a
+            key={link.label}
+            href={link.href}
+            {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            className={iconButtonClass}
+            aria-label={link.label}
+            title={link.label}
+          >
+            <Icon className="h-5 w-5" aria-hidden />
+          </a>
+        )
+      })}
+    </div>
+  )
 }
 
 export default function Footer() {
@@ -28,7 +51,7 @@ export default function Footer() {
   const contactLinks: ContactIconLink[] = [
     {
       href: mapsUrl,
-      label: `Open location in Google Maps: ${address.line1}, ${address.line2}`,
+      label: `Open location in Google Maps: ${address.line2}`,
       icon: FaMapMarkerAlt,
       external: true,
     },
@@ -42,6 +65,9 @@ export default function Footer() {
       label: `Email ${siteConfig.email}`,
       icon: FaEnvelope,
     },
+  ]
+
+  const followLinks: ContactIconLink[] = [
     {
       href: 'https://t.me/kidus_petros_mereja',
       label: 'Open Telegram channel',
@@ -49,15 +75,12 @@ export default function Footer() {
       external: true,
     },
     {
-      href: youtubeChannelUrl,
+      href: siteConfig.youtubeChannelUrl,
       label: 'Open YouTube channel',
       icon: FaYoutube,
       external: true,
     },
   ]
-
-  const iconButtonClass =
-    'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-secondary-800 text-primary-500 transition-colors hover:bg-secondary-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500'
 
   return (
     <footer className="bg-secondary-900 text-white">
@@ -99,32 +122,15 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="min-w-0">
-            <h3 className="mb-4 font-serif text-lg font-bold sm:text-xl">Contact Us</h3>
-            <div className="flex flex-wrap gap-3">
-              {contactLinks.map((link) => {
-                const Icon = link.icon
-                return (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    {...(link.external
-                      ? { target: '_blank', rel: 'noopener noreferrer' }
-                      : {})}
-                    className={iconButtonClass}
-                    aria-label={link.label}
-                    title={link.label}
-                  >
-                    <Icon className="h-5 w-5" aria-hidden />
-                  </a>
-                )
-              })}
+          <div className="min-w-0 space-y-6">
+            <div>
+              <h3 className="mb-4 font-serif text-lg font-bold sm:text-xl">Contact Us</h3>
+              <IconLinkRow links={contactLinks} />
             </div>
-            <p className="mt-4 break-words text-sm leading-relaxed text-secondary-400">
-              {address.line1}
-              <br />
-              {address.line2}
-            </p>
+            <div>
+              <h3 className="mb-4 font-serif text-lg font-bold sm:text-xl">Follow Us</h3>
+              <IconLinkRow links={followLinks} />
+            </div>
           </div>
         </div>
 

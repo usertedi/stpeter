@@ -118,6 +118,7 @@ export const siteConfig = {
   },
   telephone: ['+251946406302', '+251972547887'],
   email: 'contact@kiduspetros.com',
+  youtubeChannelUrl: 'https://www.youtube.com/@ቅዱስጴጥሮስግቢጉባኤkidusp',
 } as const
 
 export const formatSiteAddressLines = () => ({

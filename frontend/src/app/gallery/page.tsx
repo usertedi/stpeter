@@ -10,11 +10,16 @@ export default function GalleryPage() {
   const { images, loading } = useGallery();
   const [activeAlbum, setActiveAlbum] = useState('all');
 
+  const hasFeaturedImages = images.some((image) => image.featured);
+
   useEffect(() => {
     if (activeAlbum.trim().toLowerCase() === 'youth') {
       setActiveAlbum('all');
     }
-  }, [activeAlbum]);
+    if (activeAlbum === 'featured' && !hasFeaturedImages) {
+      setActiveAlbum('all');
+    }
+  }, [activeAlbum, hasFeaturedImages]);
 
   // Get unique albums from the images
   const availableAlbums =
@@ -34,6 +39,7 @@ export default function GalleryPage() {
             activeAlbum={activeAlbum}
             onAlbumChange={setActiveAlbum}
             availableAlbums={availableAlbums}
+            showFeaturedFilter={hasFeaturedImages}
           />
         </div>
       </section>

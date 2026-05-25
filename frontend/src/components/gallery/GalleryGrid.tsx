@@ -82,10 +82,12 @@ export default function GalleryGrid({ activeAlbum = 'all', images, loading }: Ga
   // Use API data if available, otherwise fallback to static data
   const allImages = images.length > 0 ? images : fallbackImages;
   
-  // Filter images by album
-  const galleryImages = activeAlbum === 'all' 
-    ? allImages 
-    : allImages.filter(image => image.album === activeAlbum);
+  // Filter images by album or featured
+  const galleryImages = useMemo(() => {
+    if (activeAlbum === 'all') return allImages;
+    if (activeAlbum === 'featured') return allImages.filter((image) => image.featured);
+    return allImages.filter((image) => image.album === activeAlbum);
+  }, [activeAlbum, allImages]);
 
   const openLightbox = (id: string) => {
     setSelectedImage(id);
@@ -144,6 +146,16 @@ export default function GalleryGrid({ activeAlbum = 'all', images, loading }: Ga
         {[...Array(6)].map((_, index) => (
           <div key={index} className="bg-gray-200 animate-pulse h-64 rounded-lg"></div>
         ))}
+      </div>
+    );
+  }
+
+  if (galleryImages.length === 0) {
+    return (
+      <div className="rounded-lg bg-gray-50 py-16 text-center">
+        <p className="text-gray-600">
+          {activeAlbum === 'featured' ? 'No featured photos yet.' : 'No photos in this album yet.'}
+        </p>
       </div>
     );
   }

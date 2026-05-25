@@ -17,6 +17,7 @@ interface AlbumFilterProps {
   activeAlbum: string;
   onAlbumChange: (album: string) => void;
   availableAlbums?: string[];
+  showFeaturedFilter?: boolean;
   /** On dark hero: tighter spacing, no secondary heading; pill styling for contrast */
   variant?: 'default' | 'hero';
 }
@@ -25,12 +26,17 @@ export default function AlbumFilter({
   activeAlbum,
   onAlbumChange,
   availableAlbums = [],
+  showFeaturedFilter = false,
   variant = 'default',
 }: AlbumFilterProps) {
+  const featuredPill = { id: 'featured', name: 'Featured' };
+  const allPill = { id: 'all', name: 'All Photos' };
+
   // Generate albums from available data or use defaults
   const albums = availableAlbums.length > 0
     ? [
-        { id: 'all', name: 'All Photos' },
+        allPill,
+        ...(showFeaturedFilter ? [featuredPill] : []),
         ...availableAlbums
           .filter((album) => !albumIdIsYouth(String(album)))
           .map((album) => ({
@@ -38,7 +44,11 @@ export default function AlbumFilter({
             name: album.charAt(0).toUpperCase() + album.slice(1).replace(/([A-Z])/g, ' $1'),
           })),
       ]
-    : defaultAlbums;
+    : [
+        allPill,
+        ...(showFeaturedFilter ? [featuredPill] : []),
+        ...defaultAlbums.slice(1),
+      ];
 
   const isHero = variant === 'hero';
 

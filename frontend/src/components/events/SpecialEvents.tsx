@@ -1,6 +1,6 @@
 "use client";
 import { motion } from 'framer-motion'
-import { useEvents } from '@/hooks/useEvents'
+import type { Event } from '@/lib/content-types'
 import { formatEventDate } from '@/lib/dates'
 
 // Fallback data in case API fails
@@ -16,33 +16,14 @@ const fallbackSpecialEvents = [
   },
 ]
 
-export default function SpecialEvents() {
-  const { events, loading } = useEvents();
-  
-  // Filter for special events or use fallback data
+type SpecialEventsProps = {
+  events?: Event[];
+};
+
+export default function SpecialEvents({ events = [] }: SpecialEventsProps) {
   const specialEvents = events.length > 0 
     ? events.filter(event => event.category === 'special' || event.featured === true || event.category === 'education')
     : fallbackSpecialEvents;
-
-  if (loading) {
-    return (
-      <section className="section bg-gray-50">
-        <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="heading-2 mb-4">Special Events</h2>
-            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
-              Upcoming special events and celebrations
-            </p>
-          </div>
-          <div className="space-y-8 max-w-4xl mx-auto">
-            {[...Array(3)].map((_, index) => (
-              <div key={index} className="bg-gray-200 animate-pulse h-32 rounded-lg"></div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="section bg-gray-50">

@@ -62,7 +62,7 @@ app.use('/api/contact', (req, res, next) => (
 
 app.use(['/api/events', '/api/divisions', '/api/gallery'], (req, res, next) => {
   if (req.method === 'GET') {
-    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    res.set('Cache-Control', 'public, max-age=86400, stale-while-revalidate=86400');
   }
 
   next();

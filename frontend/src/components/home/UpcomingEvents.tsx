@@ -1,7 +1,7 @@
 "use client";
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { useEvents } from '@/hooks/useEvents'
+import type { Event } from '@/lib/content-types'
 import { formatEventDate } from '@/lib/dates'
 
 // Fallback data in case API fails
@@ -51,33 +51,14 @@ const fallbackSpecialEvents = [
   },
 ]
 
-export default function UpcomingEvents() {
-  const { events, loading } = useEvents();
-  
-  // Copy SpecialEvents filter: show 'special' or featured (and education as secondary)
+type UpcomingEventsProps = {
+  events?: Event[];
+};
+
+export default function UpcomingEvents({ events = [] }: UpcomingEventsProps) {
   const specialEvents = events.length > 0 
     ? events.filter(event => event.category === 'special' || event.featured === true || event.category === 'education').slice(0, 3)
     : fallbackSpecialEvents;
-
-  if (loading) {
-    return (
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="heading-2 mb-4">Upcoming Events</h2>
-            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
-              ሳምንታዊ ፕሮግራሞቻችንን እና ሌሎች መርሀ ግብሮችን ይከታተሉ
-            </p>
-          </div>
-          <div className="space-y-8 max-w-4xl mx-auto">
-            {[...Array(3)].map((_, index) => (
-              <div key={index} className="bg-gray-200 animate-pulse h-32 rounded-lg"></div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="section bg-white">

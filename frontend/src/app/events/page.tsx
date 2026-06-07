@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import EventsHero from '@/components/events/EventsHero'
 import WeeklySchedule from '@/components/events/WeeklySchedule'
 import SpecialEvents from '@/components/events/SpecialEvents'
+import { getEvents } from '@/lib/server-api'
 import { originalMeta, siteConfig, siteUrl } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -21,12 +22,14 @@ export const metadata: Metadata = {
   },
 }
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  const events = await getEvents()
+
   return (
     <div className="min-h-screen">
       <EventsHero />
       <WeeklySchedule />
-      <SpecialEvents />
+      <SpecialEvents events={events} />
     </div>
   )
 }

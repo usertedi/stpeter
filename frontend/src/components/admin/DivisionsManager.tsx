@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { apiFetch, getApiErrorMessage } from '@/lib/api';
+import { refreshPublicContent } from '@/lib/revalidate-public';
 import {
   DEFAULT_DIVISION_THEME,
   DIVISION_THEME_OPTIONS,
@@ -187,6 +188,7 @@ export default function DivisionsManager() {
         setDivisions([...divisions, newDivision.data]);
       }
 
+      await refreshPublicContent('divisions');
       handleCloseModal();
     } catch (error) {
       console.error('Error saving division:', error);
@@ -219,6 +221,7 @@ export default function DivisionsManager() {
 
       const updatedDivisions = divisions.filter((div) => div._id !== id);
       setDivisions(updatedDivisions);
+      await refreshPublicContent('divisions');
     } catch (error) {
       console.error('Error deleting division:', error);
       alert('Failed to delete division. Please try again.');

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import { apiFetch, getApiErrorMessage } from '@/lib/api';
+import { refreshPublicContent } from '@/lib/revalidate-public';
 
 // Mock data for gallery images
 const initialGalleryItems = [
@@ -239,6 +240,8 @@ export default function GalleryManager() {
         const data = await res.json();
         setGalleryItems([normalizeGalleryItem(data.data), ...galleryItems]);
       }
+
+      await refreshPublicContent('gallery');
       handleCloseModal();
     } catch (err) {
       console.error('Error saving gallery item:', err);
@@ -265,7 +268,7 @@ export default function GalleryManager() {
         throw new Error(await getApiErrorMessage(res, 'Failed to delete image'));
       }
       setGalleryItems(galleryItems.filter(i => i._id !== id));
-      alert('Image deleted successfully');
+      await refreshPublicContent('gallery');
     } catch (err) {
       console.error('Error deleting image:', err);
       alert(err instanceof Error ? err.message : 'Failed to delete');

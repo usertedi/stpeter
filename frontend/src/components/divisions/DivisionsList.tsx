@@ -1,7 +1,7 @@
 "use client";
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { useDivisions } from '@/hooks/useDivisions'
+import type { Division } from '@/lib/content-types'
 import { divisionIconMap, normalizeDivisionThemeId } from '@/lib/divisionDisplay'
 
 /** Row1: blue, pink, slate — Row2: blue, slate, pink. Backgrounds: sky/pink/slate-100 to match ref pastels (~#E1F5FE, #FCE4EC, #F0F4F8). */
@@ -107,29 +107,11 @@ const itemVariants = {
   },
 }
 
-export default function DivisionsList() {
-  const { divisions, loading } = useDivisions();
+type DivisionsListProps = {
+  divisions?: Division[];
+};
 
-  if (loading) {
-    return (
-      <section className="section bg-white">
-        <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="heading-2 mb-4">Our Service Divisions</h2>
-            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
-              {/* Learn about the various ministries that serve our church and community */}
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[...Array(9)].map((_, i) => (
-              <div key={i} className="bg-gray-200 animate-pulse h-48 rounded-lg" />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
+export default function DivisionsList({ divisions = [] }: DivisionsListProps) {
   const cards = divisions.length > 0 ? divisions.slice(0, 9) : fallbackDivisions;
 
   return (

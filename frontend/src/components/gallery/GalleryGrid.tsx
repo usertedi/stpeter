@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import type { GalleryImage } from '@/hooks/useGallery';
+import type { GalleryImage } from '@/lib/content-types';
 
 // Fallback data in case API fails
 const fallbackImages = [
@@ -72,10 +72,9 @@ const fallbackImages = [
 interface GalleryGridProps {
   activeAlbum?: string;
   images: GalleryImage[];
-  loading: boolean;
 }
 
-export default function GalleryGrid({ activeAlbum = 'all', images, loading }: GalleryGridProps) {
+export default function GalleryGrid({ activeAlbum = 'all', images }: GalleryGridProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -139,16 +138,6 @@ export default function GalleryGrid({ activeAlbum = 'all', images, loading }: Ga
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 }
   };
-
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, index) => (
-          <div key={index} className="bg-gray-200 animate-pulse h-64 rounded-lg"></div>
-        ))}
-      </div>
-    );
-  }
 
   if (galleryImages.length === 0) {
     return (

@@ -5,6 +5,7 @@ import MissionStatement from '@/components/home/MissionStatement'
 import FeaturedDivisions from '@/components/home/FeaturedDivisions'
 import UpcomingEvents from '@/components/home/UpcomingEvents'
 import CallToAction from '@/components/home/CallToAction'
+import { getDivisions, getEvents } from '@/lib/server-api'
 import { originalMeta, siteConfig, siteUrl } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -13,7 +14,12 @@ export const metadata: Metadata = {
   alternates: { canonical: siteUrl },
 }
 
-export default function Home() {
+export default async function Home() {
+  const [divisions, events] = await Promise.all([
+    getDivisions({ limit: 10 }),
+    getEvents({ limit: 20 }),
+  ])
+
   return (
     <div className="min-h-screen">
       <h1 className="sr-only">
@@ -22,8 +28,8 @@ export default function Home() {
 
       <Hero />
       <MissionStatement />
-      <FeaturedDivisions />
-      <UpcomingEvents />
+      <FeaturedDivisions divisions={divisions} />
+      <UpcomingEvents events={events} />
       <CallToAction />
     </div>
   )

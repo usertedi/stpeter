@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { apiFetch, getApiErrorMessage } from '@/lib/api';
+import { refreshPublicContent } from '@/lib/revalidate-public';
 
 // Mock data for events
 const initialEvents = [
@@ -200,7 +201,8 @@ export default function EventsManager() {
         const newEvent = await response.json();
         setEvents([...events, newEvent.data]);
       }
-      
+
+      await refreshPublicContent('events');
       handleCloseModal();
     } catch (error) {
       console.error('Error saving event:', error);
@@ -233,6 +235,7 @@ export default function EventsManager() {
 
       const updatedEvents = events.filter((evt) => evt._id !== id);
       setEvents(updatedEvents);
+      await refreshPublicContent('events');
     } catch (error) {
       console.error('Error deleting event:', error);
       alert('Failed to delete event. Please try again.');

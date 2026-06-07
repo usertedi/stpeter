@@ -1,7 +1,7 @@
 "use client";
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { useDivisions } from '@/hooks/useDivisions'
+import type { Division } from '@/lib/content-types'
 import {
   divisionColorClassMap,
   divisionIconMap,
@@ -63,31 +63,12 @@ const getDivisionName = (division: { name?: string; title?: string }) => (
   division.name || division.title || 'Division'
 )
 
-export default function FeaturedDivisions() {
-  const { divisions, loading } = useDivisions();
+type FeaturedDivisionsProps = {
+  divisions?: Division[];
+};
 
-  // Use API data if available, otherwise fallback to static data
+export default function FeaturedDivisions({ divisions = [] }: FeaturedDivisionsProps) {
   const featuredDivisions = divisions.length > 0 ? divisions.slice(0, 4) : fallbackDivisions;
-
-  if (loading) {
-    return (
-      <section className="section bg-gray-50">
-        <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="heading-2 mb-4">Our Divisions</h2>
-            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
-              የጊቢ ጉባኤያችን የተለያዩ የስራ ክፍፍሎች
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, index) => (
-              <div key={index} className="bg-gray-200 animate-pulse h-64 rounded-lg"></div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="section bg-gray-50">

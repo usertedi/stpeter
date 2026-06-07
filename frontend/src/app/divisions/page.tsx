@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import DivisionsHero from '@/components/divisions/DivisionsHero'
 import DivisionsList from '@/components/divisions/DivisionsList'
+import { getDivisions } from '@/lib/server-api'
 import { originalMeta, siteConfig, siteUrl } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -20,11 +21,13 @@ export const metadata: Metadata = {
   },
 }
 
-export default function DivisionsPage() {
+export default async function DivisionsPage() {
+  const divisions = await getDivisions()
+
   return (
     <div className="min-h-screen">
       <DivisionsHero />
-      <DivisionsList />
+      <DivisionsList divisions={divisions} />
     </div>
   )
 }
